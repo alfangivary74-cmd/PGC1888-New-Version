@@ -40,7 +40,7 @@
             transition: all 0.4s ease-in-out;
         }
 
-        /* Mode Fullscreen Aktif */
+        /* Mode Fullscreen Aktif Sesuai Permintaan Alfan */
         .game-container.is-fullscreen {
             grid-template-columns: 1fr;
             max-width: 95vw;
@@ -49,7 +49,7 @@
         .game-container.is-fullscreen .board-wrapper {
             max-width: 1200px !important; /* Lebar maksimal dikunci pada 1200px */
             width: 100%;
-            height: 1000px !important; /* Tinggi vertikal dikunci pada 1000px sesuai permintaan Alfan */
+            height: 1000px !important; /* Tinggi vertikal dikunci pada 1000px */
             min-height: 520px;
             margin: 0 auto;
         }
@@ -364,7 +364,6 @@
         <span id="fullscreen-icon" class="text-xl md:text-2xl">🖥️</span>
     </button>
 
-    <!-- Halaman Menu Utama -->
     <div id="screen-menu" class="w-full max-w-md bg-white border-8 border-slate-800 rounded-[30px] shadow-[10px_10px_0_#0f172a] p-8 text-center mx-4 z-50">
         <div class="text-6xl mb-4">🗺️</div>
         <h1 class="font-heading text-4xl text-yellow-400 drop-shadow-[2px_2px_0_rgba(225,29,72,1)] mb-6" style="-webkit-text-stroke: 2px #be123c;">LABIRIN HARTA KARUN</h1>
@@ -461,6 +460,7 @@
         </div>
     </div>
 
+    <!-- Modal Suit Jepang KGB -->
     <div id="kgb-modal" class="modal-overlay">
         <div class="modal-content !max-w-md">
             <div class="modal-icon">✊🖐️✌️</div>
@@ -812,14 +812,14 @@
                 canvas.height = size;
                 const ctx = canvas.getContext('2d');
                 
-                ctx.fillStyle = '#1b5e20'; // Hijau tua pekat tropis
+                ctx.fillStyle = '#1b5e20'; 
                 ctx.fillRect(0, 0, size, size);
                 
                 for(let i = 0; i < 400; i++) {
                     const x = Math.random() * size;
                     const y = Math.random() * size;
                     const len = 3 + Math.random() * 6;
-                    ctx.strokeStyle = Math.random() > 0.5 ? '#15803d' : '#2e7d32'; // Variasi warna daun segar
+                    ctx.strokeStyle = Math.random() > 0.5 ? '#15803d' : '#2e7d32'; 
                     ctx.lineWidth = 1 + Math.random() * 1.5;
                     ctx.beginPath();
                     ctx.moveTo(x, y);
@@ -988,7 +988,7 @@
                 "Kelompok pertama dipimpin Lurah Jasim menyasar penjara Cilegon guna membebaskan 20 tahanan politik serta melumpuhkan sipir Mas Kramadimeja.",
                 "Kelompok kedua dipimpin Haji Abdulgani dan Haji Usman menyasar gedung kepatihan untuk menangkap para pejabat kolonial yang bertindak sewenang-wenang.",
                 "Kelompok ketiga dipimpin langsung oleh Haji Tubagus Ismail bergerak cepat mengepung dan menyerang rumah dinas Asisten Residen Anyer di Alun-Alun Cilegon.",
-                "Asisten Residen Anyer, J.H.H. Gubbels, tewas dalam pertempuran tersebut di kediamannya, menandai keberhasilan awal perebutan pusat pemerintahan.",
+                "Asisten Residen Anyer, J.H.H. Gubbels, tewas dalam pertempuran tersebut di kediamannya, marking keberhasilan awal perebutan pusat pemerintahan.",
                 "Pejabat Belanda lainnya, Alfred Dumas, terluka parah saat diserang pasukan pejuang pimpinan Haji Tubagus Ismail sewaktu mencoba melarikan diri ke rumah tetangganya.",
                 "Dalam huru-hara perebutan kekuasaan tersebut, juru pengairan distrik (Mas Jayaatmaja) dan beberapa opas asisten residen yang memihak Belanda turut tewas di tangan pejuang.",
                 "Pihak pejuang juga menyita persenjataan dari garnison kecil kolonial untuk memperkuat pertahanan mereka di wilayah Cilegon.",
@@ -1017,7 +1017,7 @@
 
         const npcDialogues = {
             10: { npc: "Ki Wasyid", text: "Berhenti sejenak, Alfan! Aku Ki Wasyid. Perlawanan kami di Cilegon tahun 1888 bukan sekadar amarah, tapi perlawanan atas ketidakadilan kolonial dan pembatasan ibadah kita. Bawa semangat pantang menyerah ini ke garis akhir!" },
-            20: { npc: "Haji Tubagus Ismail", text: "Salam, Pejuang! Aku Haji Tubagus Ismail. Tahukah kamu? Bencana letusan Krakatau 1883 membuat rakyat sangat menderita, namun Belanda justru memeras kami dengan pajak yang mencekik. Geger Cilegon adalah puncak perlawanan kami demi rakyat!" },
+            20: { npc: "Haji Tubagus Ismail", text: "Salam, Pejuang! Aku Haji Tubagus Ismail. Tahukah kamu? Bencana letusan Krakatau 1883 membuat rakyat sangat menderita, namun Belanda justru memeras kami dengan pajak yang mengekik. Geger Cilegon adalah puncak perlawanan kami demi rakyat!" },
             30: { npc: "Haji Madani", text: "Teruslah maju! Aku Haji Madani. Meski senjata kami seadanya dan banyak tokoh kami gugur atau dibuang ke pengasingan, Geger Cilegon membuktikan keberanian warga Banten melawan penindasan tanpa rasa takut. Kemenangan sudah dekat!" },
             40: { npc: "Haji Abdurahman", text: "Sedikit lagi! Aku Haji Abdurahman. Ingatlah bahwa perjuangan kami adalah demi kehormatan dan kebebasan. Buktikan ketangguhanmu dan raihlah kemenangan di ujung jalan!" },
             50: { npc: "Haji Ishak", text: "Luar biasa! Aku Haji Ishak. Perjalananmu sudah hampir mencapai puncaknya. Teruskan semangat juang pantang menyerah ini, jangan biarkan rintangan apapun menghentikan langkahmu menuju kemenangan sejati!" }
@@ -1323,7 +1323,7 @@
             // 1. PONDASI BATU (Stone Base / Foundation)
             const baseGeo = new THREE.BoxGeometry(2.2, 0.35, 1.8);
             const baseMat = new THREE.MeshStandardMaterial({
-                color: 0x64748b, // Slate Stone Grey
+                color: 0x64748b, 
                 roughness: 0.9,
                 flatShading: true
             });
@@ -1336,17 +1336,17 @@
             // 2. DINDING UTAMA (Cream Warm Walls)
             const wallGeo = new THREE.BoxGeometry(2.0, 1.4, 1.6);
             const wallMat = new THREE.MeshStandardMaterial({
-                color: 0xfffbeb, // Cream/Off-white
+                color: 0xfffbeb, 
                 roughness: 0.92,
                 flatShading: true
             });
             const wallMesh = new THREE.Mesh(wallGeo, wallMat);
-            wallMesh.position.y = 0.35 + 0.7; // duduk di atas pondasi
+            wallMesh.position.y = 0.35 + 0.7; 
             wallMesh.castShadow = true;
             wallMesh.receiveShadow = true;
             cottageGroup.add(wallMesh);
 
-            // 3. SEGITIGA GABLE ATAP (Wall Gable Triangles)
+            // 3. SEGITIGA GABLE ATAP
             const triangleShape = new THREE.Shape();
             triangleShape.moveTo(-1.0, 0);
             triangleShape.lineTo(1.0, 0);
@@ -1356,35 +1356,33 @@
             const extrudeSettings = { depth: 1.6, bevelEnabled: false };
             const gableGeo = new THREE.ExtrudeGeometry(triangleShape, extrudeSettings);
             const gableMesh = new THREE.Mesh(gableGeo, wallMat);
-            gableMesh.position.set(0, 1.75, -0.8); // Pas di atas tinggi dinding
+            gableMesh.position.set(0, 1.75, -0.8); 
             gableMesh.castShadow = true;
             cottageGroup.add(gableMesh);
 
-            // 4. ATAP GENTING JINGGA (Terracotta Red Roof Slopes)
+            // 4. ATAP GENTING JINGGA
             const roofSlopeGeo = new THREE.BoxGeometry(1.4, 0.12, 1.85);
             const roofMat = new THREE.MeshStandardMaterial({
-                color: 0xe05a36, // Terracotta/Genting Jingga dari "ChatGPT Image Jul 19, 2026, 12_39_38 PM.png"
+                color: 0xe05a36, 
                 roughness: 0.8,
                 flatShading: true
             });
 
-            // Atap lereng kiri
             const leftSlope = new THREE.Mesh(roofSlopeGeo, roofMat);
             leftSlope.position.set(-0.55, 2.1, 0);
             leftSlope.rotation.z = 0.65;
             leftSlope.castShadow = true;
             cottageGroup.add(leftSlope);
 
-            // Atap lereng kanan
             const rightSlope = new THREE.Mesh(roofSlopeGeo, roofMat);
             rightSlope.position.set(0.55, 2.1, 0);
             rightSlope.rotation.z = -0.65;
             rightSlope.castShadow = true;
             cottageGroup.add(rightSlope);
 
-            // 5. DETAIL TIANG KAYU (Timber Frames)
+            // 5. DETAIL TIANG KAYU
             const woodMat = new THREE.MeshStandardMaterial({
-                color: 0x78350f, // Dark Brown Wood
+                color: 0x78350f, 
                 roughness: 0.95,
                 flatShading: true
             });
@@ -1401,7 +1399,7 @@
                 cottageGroup.add(pil);
             });
 
-            // Lis kayu horizontal di atas dinding depan & belakang
+            // Lis kayu horizontal
             const hTrimGeo = new THREE.BoxGeometry(2.04, 0.08, 0.08);
             const trimFront = new THREE.Mesh(hTrimGeo, woodMat);
             trimFront.position.set(0, 1.71, 0.8);
@@ -1411,22 +1409,22 @@
             trimBack.position.set(0, 1.71, -0.8);
             cottageGroup.add(trimBack);
 
-            // 6. DETAIL PINTU KAYU (Wooden Door)
+            // 6. DETAIL PINTU KAYU
             const doorGeo = new THREE.BoxGeometry(0.48, 0.9, 0.06);
             const door = new THREE.Mesh(doorGeo, woodMat);
-            door.position.set(-0.35, 0.8, 0.81); // Di sebelah kiri tampak depan
+            door.position.set(-0.35, 0.8, 0.81); 
             door.castShadow = true;
             cottageGroup.add(door);
 
-            // 7. DETAIL JENDELA KACA (Glass Windows with Wooden Frame)
+            // 7. DETAIL JENDELA KACA
             const winFrameGeo = new THREE.BoxGeometry(0.45, 0.45, 0.06);
             const winFrame = new THREE.Mesh(winFrameGeo, woodMat);
-            winFrame.position.set(0.4, 1.0, 0.81); // Di sebelah kanan tampak depan
+            winFrame.position.set(0.4, 1.0, 0.81); 
             cottageGroup.add(winFrame);
 
             const glassGeo = new THREE.BoxGeometry(0.35, 0.35, 0.08);
             const glassMat = new THREE.MeshStandardMaterial({
-                color: 0xbae6fd, // Sky Blue Glass
+                color: 0xbae6fd, 
                 roughness: 0.2,
                 metalness: 0.8
             });
@@ -1434,7 +1432,6 @@
             glass.position.set(0.4, 1.0, 0.81);
             cottageGroup.add(glass);
 
-            // Jendela tambahan di loteng samping (dormer window)
             const dormerWin = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.06), woodMat);
             dormerWin.position.set(0, 2.05, 0.81);
             cottageGroup.add(dormerWin);
@@ -1443,21 +1440,20 @@
             dormerGlass.position.set(0, 2.05, 0.81);
             cottageGroup.add(dormerGlass);
 
-            // 8. TANGGA PIJAKAN KAYU (Wooden Entry Steps)
+            // 8. TANGGA PIJAKAN KAYU
             const stepGeo = new THREE.BoxGeometry(0.65, 0.12, 0.25);
             const step = new THREE.Mesh(stepGeo, woodMat);
             step.position.set(-0.35, 0.41, 0.925);
             step.castShadow = true;
             cottageGroup.add(step);
 
-            // 9. CEROBONG ASAP (Chimney)
+            // 9. CEROBONG ASAP
             const chimneyGeo = new THREE.BoxGeometry(0.28, 1.1, 0.28);
             const chimney = new THREE.Mesh(chimneyGeo, baseMat);
             chimney.position.set(-0.72, 2.2, -0.45);
             chimney.castShadow = true;
             cottageGroup.add(chimney);
 
-            // Set posisi akhir & rotasi
             cottageGroup.position.set(x, -0.28, z);
             cottageGroup.rotation.y = rotationY;
             scene3D.add(cottageGroup);
@@ -1686,7 +1682,6 @@
                 treeGroup.add(clusterGroup);
             }
 
-            // flag the trees with randomized sizes
             const scale = customScale !== null ? customScale : (1.8 + Math.random() * 1.0);
             treeGroup.scale.set(scale, scale, scale);
 
@@ -1726,7 +1721,7 @@
             const height = container.clientHeight || 450;
 
             scene3D = new THREE.Scene();
-            scene3D.background = new THREE.Color(0x7dd3fc); // Sky Blue
+            scene3D.background = new THREE.Color(0x7dd3fc); 
             scene3D.fog = new THREE.FogExp2(0x7dd3fc, 0.015); 
 
             camera3D = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
@@ -1743,7 +1738,7 @@
             const hemiLight = new THREE.HemisphereLight(0xffffff, 0xdcfce7, 0.5); 
             scene3D.add(hemiLight);
 
-            const dirLight = new THREE.DirectionalLight(0xf0fdf4, 1.3); // High intensity light to accentuate low-poly facets
+            const dirLight = new THREE.DirectionalLight(0xf0fdf4, 1.3); 
             dirLight.position.set(15, 35, 20);
             dirLight.castShadow = true;
             dirLight.shadow.mapSize.width = 1024;
@@ -1793,15 +1788,13 @@
             const woodTex = TextureGenerator.generateWood();
             const normalPathTex = TextureGenerator.generateCobble(256, '#f97316', '#7c2d12');
 
-            // Faceted Grass Material with solid rich green color & flatShading active
             const grassFacetedMat = new THREE.MeshStandardMaterial({
-                color: 0x2e7d32, // Rich organic forest green
+                color: 0x2e7d32, 
                 roughness: 0.95,
                 metalness: 0.05,
-                flatShading: true // Highlights polygon edges beautifully
+                flatShading: true 
             });
 
-            // Reconstruct meadow meshes for beautiful low-poly hill formations
             const meadowNorthGeo = new THREE.PlaneGeometry(60, 27, 24, 12);
             const meadowSouthGeo = new THREE.PlaneGeometry(60, 27, 24, 12);
 
@@ -1811,18 +1804,15 @@
                     const x = posAttr.getX(j);
                     const y = posAttr.getY(j);
                     
-                    // Gradually damp height near the river (y = 0 in local space) to prevent gaps
                     const distToRiver = Math.abs(y);
                     let dampening = 1.0;
                     if (distToRiver < 6) {
                         dampening = distToRiver / 6;
                     }
                     
-                    // Math-based smooth waving + subtle noise for beautiful low-poly look
                     const heightOffset = (Math.sin(x * 0.12) * Math.cos(y * 0.12) * 1.5 + (Math.random() - 0.5) * 0.25) * dampening;
                     posAttr.setZ(j, heightOffset);
 
-                    // Slightly jitter X and Z coordinates of internal vertices for geometric variety
                     if (Math.abs(x) < 28 && distToRiver > 2) {
                         posAttr.setX(j, x + (Math.random() - 0.5) * 0.45);
                         posAttr.setY(j, y + (Math.random() - 0.5) * 0.45);
@@ -1848,7 +1838,7 @@
             meadowSouthMesh.castShadow = true;
             scene3D.add(meadowSouthMesh);
 
-            // Left side background mountains
+            // Gunung latar belakang kiri
             for (let i = 0; i < 6; i++) {
                 const r = 5 + Math.random() * 4; 
                 const x = -31 - Math.random() * 8; 
@@ -1856,7 +1846,7 @@
                 const h = 8 + Math.random() * 10;
                 createMountain(x, z, h, r);
             }
-            // Right side background mountains
+            // Gunung latar belakang kanan
             for (let i = 0; i < 6; i++) {
                 const r = 5 + Math.random() * 4; 
                 const x = 31 + Math.random() * 8; 
@@ -1864,7 +1854,7 @@
                 const h = 8 + Math.random() * 10;
                 createMountain(x, z, h, r);
             }
-            // Background backdrop mountains
+            // Gunung latar belakang belakang
             for (let i = 0; i < 8; i++) {
                 const r = 6 + Math.random() * 5; 
                 const x = -35 + i * 10 + (Math.random() * 4 - 2);
@@ -1891,7 +1881,7 @@
                 });
             });
 
-            // Koleksi lahan kosong untuk menempatkan 3 unit pondok secara seimbang
+            // Koleksi lahan kosong
             let emptyLandPositions = [];
             for (let r = 0; r < 12; r++) {
                 for (let c = 0; c < 12; c++) {
@@ -1902,11 +1892,10 @@
                 }
             }
 
-            // Partisi lahan untuk penyebaran 3 rumah agar seimbang di area awal, tengah, dan akhir
             let houseTargets = [];
-            const region1 = emptyLandPositions.filter(p => p.r >= 8); // Area awal
-            const region2 = emptyLandPositions.filter(p => p.r >= 4 && p.r <= 7); // Area tengah
-            const region3 = emptyLandPositions.filter(p => p.r <= 3); // Area akhir
+            const region1 = emptyLandPositions.filter(p => p.r >= 8); 
+            const region2 = emptyLandPositions.filter(p => p.r >= 4 && p.r <= 7); 
+            const region3 = emptyLandPositions.filter(p => p.r <= 3); 
 
             if (region1.length > 0) houseTargets.push(region1[Math.floor(Math.random() * region1.length)]);
             if (region2.length > 0) houseTargets.push(region2[Math.floor(Math.random() * region2.length)]);
@@ -1916,7 +1905,6 @@
             houseTargets.forEach((tgt, idx) => {
                 houseLookup[`${tgt.r}_${tgt.c}`] = true;
                 const pos = gridTo3DSpace(tgt.r, tgt.c);
-                // Rotasikan pondok agar sedikit menghadap ke arah tengah jalan secara natural
                 const rAngle = (idx * Math.PI / 2) + (Math.random() * 0.3 - 0.15); 
                 createLowPolyCottage(pos.x, pos.z, rAngle);
             });
@@ -1999,7 +1987,6 @@
                         }
 
                     } else {
-                        // Sisa lahan diteduhi pohon megah jika ubin tidak dialokasikan untuk unit rumah
                         if (!houseLookup[cellKey] && Math.random() > 0.62 && !(r === 5 || r === 6)) {
                             const treeType = Math.random() > 0.5 ? 'conifer' : 'broadleaf';
                             const tree = createMiniBlenderTree(treeType);
@@ -2010,7 +1997,6 @@
                 }
             }
 
-            // 10. PEMBUATAN MODEL KARAKTER UTAMA 3D (Voxel Boy & Sheep Companion)
             const pawnGroup = new THREE.Group();
             const boyGroup = new THREE.Group();
             boyGroup.position.set(-0.35, 0, 0); 
