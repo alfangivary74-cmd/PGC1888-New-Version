@@ -40,10 +40,11 @@
             transition: all 0.4s ease-in-out;
         }
 
-        /* Mode Fullscreen Aktif */
+        /* Mode Fullscreen Aktif - Diperluas dramatis oleh Ryu untuk Alfan */
         .game-container.is-fullscreen {
             grid-template-columns: 1fr;
-            max-width: 1000px;
+            max-width: 1650px; /* Mengisi monitor lebar dengan gagah */
+            width: 95%;
         }
         
         .game-container.is-fullscreen .sidebar-right {
@@ -53,6 +54,12 @@
 
         .game-container.is-fullscreen .main-column {
             order: 1;
+        }
+
+        /* Memaksimalkan tinggi 3D Board Wrapper secara dinamis saat Fullscreen */
+        .game-container.is-fullscreen #board-3d-wrapper {
+            height: 72vh !important;
+            max-height: 80vh !important;
         }
 
         @media (max-width: 1100px) {
