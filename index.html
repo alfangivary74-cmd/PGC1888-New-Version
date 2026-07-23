@@ -110,80 +110,6 @@
             margin: 0 auto;
             position: relative;
         }
-        
-        .board {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            grid-template-rows: repeat(12, 1fr);
-            gap: 2px;
-            background-color: #22c55e;
-            background-image: 
-                radial-gradient(circle at 20% 20%, #4ade80 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, #15803d 0%, transparent 65%);
-            padding: 5px;
-            border-radius: 15px;
-            aspect-ratio: 1 / 1;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        .cell {
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: clamp(10px, 2vw, 1.5rem);
-            position: relative;
-            transition: all 0.3s;
-            aspect-ratio: 1 / 1;
-        }
-
-        .cell.land { background-color: transparent; }
-        .cell.land-alt { background-color: transparent; }
-
-        .cell.river {
-            background-color: #38bdf8;
-            background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
-            background-size: 20px 20px;
-            animation: flow 2s linear infinite;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-        }
-        
-        @keyframes flow {
-            0% { background-position: 0 0; }
-            100% { background-position: 20px 20px; }
-        }
-
-        .cell.path {
-            background: linear-gradient(135deg, #ff9d42, #f97316);
-            border: 2px solid #7c2d12;
-            box-shadow: 0 4px 0 #7c2d12;
-            z-index: 2;
-        }
-        
-        .cell.start { 
-            background: linear-gradient(135deg, #ff9d42, #f97316) !important; 
-            border-color: #7c2d12 !important; 
-            box-shadow: 0 4px 0 #7c2d12 !important;
-        }
-        
-        .cell.finish { 
-            background: #f87171 !important; 
-            border-color: #991b1b !important; 
-            box-shadow: 0 4px 0 #991b1b !important;
-        }
-
-        .cell-content {
-            position: absolute;
-            font-size: clamp(12px, 2.5vw, 1.8rem);
-            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.3));
-            animation: floatItem 2s infinite ease-in-out;
-        }
-
-        @keyframes floatItem {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
 
         .btn-action {
             font-family: 'Fredoka One', cursive;
@@ -265,8 +191,8 @@
     <div id="hud-lives" class="fixed top-4 left-16 md:left-20 z-[9999] bg-white border-2 md:border-4 border-slate-800 px-3 py-1.5 md:py-2 rounded-xl shadow-[0_3px_0_#0f172a] flex items-center gap-2 hide-screen font-heading">
         <span id="hud-player-emoji" class="text-sm md:text-base">🧑</span>
         <span id="hud-player-name" class="text-xs md:text-sm text-slate-700 hidden sm:inline-block">Pemain</span>
-        <div id="hud-hearts" class="flex gap-1 text-sm md:text-lg"></div>
         <span id="level-display-badge" class="font-bold text-rose-600 text-xs md:text-sm bg-rose-100 py-1 px-3 rounded-full border border-rose-300 ml-1">Level 1</span>
+        <span id="online-status-badge" class="font-bold text-emerald-600 text-[10px] bg-emerald-100 py-0.5 px-2 rounded-full border border-emerald-300 ml-1 hidden">🌐 Online</span>
     </div>
 
     <button id="btn-sound" onclick="toggleSound()" class="fixed top-4 right-20 z-[9999] bg-yellow-400 border-4 border-slate-800 text-slate-800 p-3 rounded-2xl hover:bg-yellow-300 active:translate-y-1 active:shadow-none shadow-[0_4px_0_#0f172a] transition-all flex items-center justify-center w-12 h-12 md:w-14 md:h-14 font-heading" style="position: fixed !important; right: 80px !important;" title="Matikan/Nyalakan Suara">
@@ -280,11 +206,11 @@
     <div id="screen-menu" class="w-full max-w-md bg-white border-8 border-slate-800 rounded-[30px] shadow-[10px_10px_0_#0f172a] p-8 text-center mx-4 z-50">
         <div class="text-6xl mb-4">🗺️</div>
         <h1 class="font-heading text-4xl text-yellow-400 drop-shadow-[2px_2px_0_rgba(225,29,72,1)] mb-6" style="-webkit-text-stroke: 2px #be123c;">LABIRIN HARTA KARUN</h1>
-        <p class="font-bold text-slate-500 mb-8 bg-slate-100 p-2 rounded-xl border-2 border-slate-200">Petualangan Sejarah Geger Cilegon 1888 (4 Level)</p>
+        <p class="font-bold text-slate-500 mb-8 bg-slate-100 p-2 rounded-xl border-2 border-slate-200">Petualangan Sejarah Geger Cilegon 1888 (Online Multiplayer)</p>
         
         <div class="flex flex-col gap-4">
             <button onclick="selectMode(1)" class="btn-action w-full !text-2xl !py-4 flex justify-center items-center gap-3"><span class="text-3xl">🧑</span> Mulai Petualangan </button>
-            <button onclick="selectMultiplayer()" class="btn-action w-full !text-2xl !py-4 flex justify-center items-center gap-3"><span class="text-3xl">🧑</span><span class="text-3xl">🧑</span> Bermain Bersama </button>
+            <button onclick="selectMultiplayer()" class="btn-action w-full !text-2xl !py-4 flex justify-center items-center gap-3"><span class="text-3xl">🌐</span> Bermain Online (MP) </button>
         </div>
     </div>
 
@@ -322,7 +248,7 @@
 
     <div id="screen-name-input" class="hide-screen w-full max-w-lg bg-white border-8 border-slate-800 rounded-[30px] shadow-[10px_10px_0_#0f172a] p-8 text-center mx-4 z-50 max-h-[95vh] overflow-y-auto">
         <h2 class="font-heading text-3xl text-slate-700 mb-2">Masukan Nama Pemain</h2>
-        <p class="font-bold text-slate-500 mb-6">Mode: Bermain Bersama (Multiplayer)</p>
+        <p class="font-bold text-slate-500 mb-6">Mode: Bermain Online Bersama</p>
         
         <div class="mb-6 bg-slate-50 p-4 rounded-2xl border-2 border-slate-200 text-left">
             <div class="text-xs font-bold text-slate-600">
@@ -335,23 +261,23 @@
 
         <div class="flex justify-center gap-4 flex-wrap">
             <button onclick="showMenu()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#64748b] !bg-slate-300 !border-slate-500 !text-slate-700 w-auto max-w-xs transition-all">Kembali</button>
-            <button onclick="handleStartGame()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#15803d] !bg-green-400 !border-green-700 !text-green-900 w-auto max-w-xs transition-all">Mulai</button>
+            <button onclick="handleStartGame()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#15803d] !bg-green-400 !border-green-700 !text-green-900 w-auto max-w-xs transition-all">Lanjut</button>
         </div>
     </div>
 
     <div id="screen-mp-setup" class="hide-screen w-full max-w-lg bg-white border-8 border-slate-800 rounded-[30px] shadow-[10px_10px_0_#0f172a] p-8 text-center mx-4 z-50 max-h-[95vh] overflow-y-auto">
-        <h2 class="font-heading text-3xl text-slate-700 mb-2">Persiapan Pemain</h2>
-        <p class="font-bold text-slate-500 mb-6">Mode: Bermain Bersama (Multiplayer)</p>
+        <h2 class="font-heading text-3xl text-slate-700 mb-2">Buat Ruangan Online</h2>
+        <p class="font-bold text-slate-500 mb-6">Atur Ruangan Kamu</p>
         
         <div class="mb-6 bg-slate-50 p-4 rounded-2xl border-2 border-slate-200 text-left">
-            <h4 class="font-heading text-slate-700 text-sm mb-2">⚙️ Pengaturan Ruangan Kustom</h4>
+            <h4 class="font-heading text-slate-700 text-sm mb-2">⚙️ Konfigurasi Room</h4>
             <div class="text-xs font-bold text-slate-600 mb-3">
                 <p>Pemain: <span id="display-player-name" class="text-indigo-600 font-extrabold text-sm"></span></p>
             </div>
             <div class="grid grid-cols-2 gap-3 text-xs font-bold text-slate-600 mb-3">
                 <div>
                     <label class="block mb-1">Pilih Nomor Room:</label>
-                    <select id="room-number-select" class="w-full p-2 border-2 border-slate-300 rounded-xl bg-white text-slate-700 outline-none">
+                    <select id="room-number-select" class="w-full p-2 border-2 border-slate-300 rounded-xl bg-white text-slate-700 outline-none font-bold">
                         <option value="1">Room 1</option>
                         <option value="2">Room 2</option>
                         <option value="3">Room 3</option>
@@ -359,8 +285,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block mb-1">Jumlah Pemain:</label>
-                    <select id="room-player-count" class="w-full p-2 border-2 border-slate-300 rounded-xl bg-white text-slate-700 outline-none">
+                    <label class="block mb-1">Jumlah Maksimal:</label>
+                    <select id="room-player-count" class="w-full p-2 border-2 border-slate-300 rounded-xl bg-white text-slate-700 outline-none font-bold">
                         <option value="2">2 Pemain</option>
                         <option value="3">3 Pemain</option>
                         <option value="4" selected>4 Pemain</option>
@@ -368,67 +294,31 @@
                 </div>
             </div>
             <div class="text-xs font-bold text-slate-600">
-                <label class="block mb-1">Kode Ruang:</label>
+                <label class="block mb-1">Kode Ruang Rahasia:</label>
                 <input type="text" id="room-code-input" class="w-full p-2 border-2 border-slate-300 rounded-xl bg-white text-slate-700 outline-none uppercase font-bold text-center tracking-widest" value="LAB123" maxlength="6">
             </div>
         </div>
 
         <div class="flex justify-center gap-4 flex-wrap">
             <button onclick="handleBackToName()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#64748b] !bg-slate-300 !border-slate-500 !text-slate-700 w-auto max-w-xs transition-all">Kembali</button>
-            <button onclick="handleOpenLobby()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#2563eb] !bg-blue-400 !border-blue-700 !text-blue-900 w-auto max-w-xs transition-all">Lobby</button>
-            <button onclick="handleCreateLobby()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#15803d] !bg-green-400 !border-green-700 !text-green-900 w-auto max-w-xs transition-all">Buat Lobby</button>
+            <button onclick="handleOpenLobby()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#2563eb] !bg-blue-400 !border-blue-700 !text-blue-900 w-auto max-w-xs transition-all">Cari Ruang</button>
+            <button onclick="handleCreateLobby()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#15803d] !bg-green-400 !border-green-700 !text-green-900 w-auto max-w-xs transition-all">Buat Room</button>
         </div>
     </div>
 
     <div id="screen-select-room" class="hide-screen w-full max-w-lg bg-white border-8 border-slate-800 rounded-[30px] shadow-[10px_10px_0_#0f172a] p-8 text-center mx-4 z-50 max-h-[95vh] overflow-y-auto">
-        <h2 class="font-heading text-3xl text-slate-700 mb-2">Ruang Tunggu</h2>
-        <p class="font-bold text-slate-500 mb-6">Pilih Ruangan Permainan</p>
+        <h2 class="font-heading text-3xl text-slate-700 mb-2">Daftar Room Online</h2>
+        <p class="font-bold text-slate-500 mb-6">Pilih Room untuk Bergabung (Masukkan Kode)</p>
         
         <div class="mb-6 bg-slate-50 p-4 rounded-2xl border-2 border-slate-200 text-left">
-            <label class="block mb-2 text-xs font-bold text-slate-600">Pilih Nomor Room (Sinkron Kode Ruang & Host):</label>
-            <div class="grid grid-cols-2 gap-3">
-                <button type="button" onclick="selectRoomCol(1)" data-room="1" class="room-col-btn p-3 border-2 border-green-600 rounded-xl bg-green-50 text-green-900 font-bold shadow-sm text-left flex flex-col justify-between cursor-pointer">
-                    <div class="flex justify-between items-center w-full">
-                        <span class="text-sm font-heading">Room 1</span>
-                        <span id="badge-room-1" class="text-[10px] bg-slate-300 text-slate-700 px-1.5 py-0.5 rounded">Kosong</span>
-                    </div>
-                    <div class="mt-2 text-xs opacity-90 truncate">Kode: <span id="code-room-1" class="font-mono font-bold text-indigo-600">-</span></div>
-                    <div class="mt-1 text-xs opacity-90 truncate">Host: <span id="host-room-1" class="italic">-</span></div>
-                </button>
-
-                <button type="button" onclick="selectRoomCol(2)" data-room="2" class="room-col-btn p-3 border-2 border-slate-300 rounded-xl bg-white text-slate-700 hover:bg-slate-100 font-bold text-left flex flex-col justify-between cursor-pointer">
-                    <div class="flex justify-between items-center w-full">
-                        <span class="text-sm font-heading">Room 2</span>
-                        <span id="badge-room-2" class="text-[10px] bg-slate-300 text-slate-700 px-1.5 py-0.5 rounded">Kosong</span>
-                    </div>
-                    <div class="mt-2 text-xs opacity-90 truncate">Kode: <span id="code-room-2" class="font-mono font-bold text-indigo-600">-</span></div>
-                    <div class="mt-1 text-xs opacity-90 truncate">Host: <span id="host-room-2" class="italic">-</span></div>
-                </button>
-
-                <button type="button" onclick="selectRoomCol(3)" data-room="3" class="room-col-btn p-3 border-2 border-slate-300 rounded-xl bg-white text-slate-700 hover:bg-slate-100 font-bold text-left flex flex-col justify-between cursor-pointer">
-                    <div class="flex justify-between items-center w-full">
-                        <span class="text-sm font-heading">Room 3</span>
-                        <span id="badge-room-3" class="text-[10px] bg-slate-300 text-slate-700 px-1.5 py-0.5 rounded">Kosong</span>
-                    </div>
-                    <div class="mt-2 text-xs opacity-90 truncate">Kode: <span id="code-room-3" class="font-mono font-bold text-indigo-600">-</span></div>
-                    <div class="mt-1 text-xs opacity-90 truncate">Host: <span id="host-room-3" class="italic">-</span></div>
-                </button>
-
-                <button type="button" onclick="selectRoomCol(4)" data-room="4" class="room-col-btn p-3 border-2 border-slate-300 rounded-xl bg-white text-slate-700 hover:bg-slate-100 font-bold text-left flex flex-col justify-between cursor-pointer">
-                    <div class="flex justify-between items-center w-full">
-                        <span class="text-sm font-heading">Room 4</span>
-                        <span id="badge-room-4" class="text-[10px] bg-slate-300 text-slate-700 px-1.5 py-0.5 rounded">Kosong</span>
-                    </div>
-                    <div class="mt-2 text-xs opacity-90 truncate">Kode: <span id="code-room-4" class="font-mono font-bold text-indigo-600">-</span></div>
-                    <div class="mt-1 text-xs opacity-90 truncate">Host: <span id="host-room-4" class="italic">-</span></div>
-                </button>
+            <label class="block mb-2 text-xs font-bold text-slate-600">Room Aktif di Cloud:</label>
+            <div class="grid grid-cols-2 gap-3" id="rooms-grid-container">
+                <!-- Dynamically populated room cards -->
             </div>
-            <input type="hidden" id="room-selected-input" value="1">
         </div>
 
         <div class="flex justify-center gap-4 flex-wrap">
             <button onclick="handleBackToSetup()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#64748b] !bg-slate-300 !border-slate-500 !text-slate-700 w-auto max-w-xs transition-all">Kembali</button>
-            <button onclick="handleConfirmRoom()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#15803d] !bg-green-400 !border-green-700 !text-green-900 w-auto max-w-xs transition-all">Mulai</button>
         </div>
     </div>
 
@@ -450,7 +340,7 @@
             <div class="panel h-full bg-white shadow-md">
                 <h2 class="panel-header text-center flex justify-between items-center">
                     <span>🏆 Papan Skor</span>
-                    <span class="text-[11px] bg-green-100 text-green-800 px-2 py-0.5 rounded-full border border-green-300 font-semibold">Bebas Melangkah</span>
+                    <span id="room-code-badge" class="text-[10px] bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full border border-indigo-300 font-bold">Room: -</span>
                 </h2>
                 <table class="score-table">
                     <thead>
@@ -462,6 +352,21 @@
                     </thead>
                     <tbody id="leaderboard-body"></tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="room-code-join-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-icon">🔑</div>
+            <h2 class="modal-title !text-2xl text-indigo-600">Masukkan Kode Room</h2>
+            <p id="modal-join-room-title" class="font-bold text-slate-500 mb-4 text-sm">Room 1</p>
+            <div class="mb-4">
+                <input type="text" id="join-room-code-input" class="w-full p-3 border-4 border-slate-300 rounded-xl font-bold text-center text-xl text-slate-700 uppercase tracking-widest outline-none" placeholder="KODE" maxlength="6">
+            </div>
+            <div class="flex gap-3 justify-center">
+                <button onclick="closeJoinCodeModal()" class="btn-action !bg-slate-300 !border-slate-500 !text-slate-700 !shadow-[0_6px_0_#64748b] w-1/2 !text-base">Batal</button>
+                <button onclick="verifyAndJoinRoom()" class="btn-action !bg-green-400 !border-green-700 !text-green-900 !shadow-[0_6px_0_#15803d] w-1/2 !text-base">Masuk</button>
             </div>
         </div>
     </div>
@@ -519,7 +424,7 @@
         <div class="modal-content">
             <div class="modal-icon">🚪</div>
             <h2 class="modal-title">Keluar Game?</h2>
-            <p class="modal-text">Apakah kamu yakin ingin kembali ke menu utama? Semua skor dan kemajuan bermain saat ini akan terhapus!</p>
+            <p class="modal-text">Apakah kamu yakin ingin kembali ke menu utama?</p>
             <div class="flex gap-3 justify-center">
                 <button onclick="closeExitModal()" class="btn-action !bg-slate-300 !border-slate-500 !text-slate-700 !shadow-[0_6px_0_#64748b] w-1/2">Batal</button>
                 <button onclick="confirmExit()" class="btn-action !bg-red-400 !border-red-700 !text-red-900 !shadow-[0_6px_0_#991b1b] w-1/2">Ya, Keluar</button>
@@ -527,7 +432,35 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let db = null, auth = null, userId = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'geger-cilegon-1888-game';
+
+        async function initFirebase() {
+            try {
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "demo", projectId: "demo" };
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                userId = auth.currentUser?.uid || crypto.randomUUID();
+                console.log("Firebase initialized successfully. User ID:", userId);
+            } catch (e) {
+                console.warn("Firebase running in offline/local mock mode:", e);
+            }
+        }
+        initFirebase();
+
+        // Audio helper system
         const AudioHelper = {
             ctx: null,
             muted: false,
@@ -877,37 +810,28 @@
         }
 
         const npcDialogues = {
-            10: { npc: "Ki Wasyid", text: "Berhenti sejenak, Alfan! Aku Ki Wasyid. Perlawanan kami di Cilegon tahun 1888 bukan sekadar amarah, tapi perlawanan atas ketidakadilan kolonial dan pembatasan ibadah kita. Bawa semangat pantang menyerah ini ke garis akhir!" },
-            20: { npc: "Haji Tubagus Ismail", text: "Salam, Pejuang! Aku Haji Tubagus Ismail. Tahukah kamu? Bencana letusan Krakatau 1883 membuat rakyat sangat menderita, namun Belanda justru memeras kami dengan pajak yang mengekik. Geger Cilegon adalah puncak perlawanan kami demi rakyat!" },
-            30: { npc: "Haji Madani", text: "Teruslah maju! Aku Haji Madani. Meski senjata kami seadanya dan banyak tokoh kami gugur atau dibuang ke pengasingan, Geger Cilegon membuktikan keberanian warga Banten melawan penindasan tanpa rasa takut. Kemenangan sudah dekat!" },
-            40: { npc: "Haji Abdurahman", text: "Sedikit lagi! Aku Haji Abdurahman. Ingatlah bahwa perjuangan kami adalah demi kehormatan dan kebebasan. Buktikan ketangguhanmu dan raihlah kemenangan di ujung jalan!" },
-            50: { npc: "Haji Ishak", text: "Luar biasa! Aku Haji Ishak. Perjalananmu sudah hampir mencapai puncaknya. Teruskan semangat juang pantang menyerah ini, jangan biarkan rintangan apapun menghentikan langkahmu menuju kemenangan sejati!" }
+            10: { npc: "Ki Wasyid", text: "Berhenti sejenak! Aku Ki Wasyid. Perlawanan kami di Cilegon tahun 1888 bukan sekadar amarah, tapi perlawanan atas ketidakadilan kolonial dan pembatasan ibadah kita!" },
+            20: { npc: "Haji Tubagus Ismail", text: "Salam, Pejuang! Aku Haji Tubagus Ismail. Bencana letusan Krakatau 1883 membuat rakyat menderita, namun Belanda justru memeras kami dengan pajak yang mencekik!" },
+            30: { npc: "Haji Madani", text: "Teruslah maju! Aku Haji Madani. Meski senjata kami seadanya, Geger Cilegon membuktikan keberanian warga Banten melawan penindasan!" },
+            40: { npc: "Haji Abdurahman", text: "Sedikit lagi! Aku Haji Abdurahman. Ingatlah bahwa perjuangan kami adalah demi kehormatan dan kebebasan." },
+            50: { npc: "Haji Ishak", text: "Luar biasa! Aku Haji Ishak. Perjalananmu hampir mencapai puncaknya. Teruskan semangat juang pantang menyerah ini!" }
         };
 
         const gegerCilegonSnippets = {
             1: [
-                "Geger Cilegon 1888 dipicu oleh penderitaan mendalam rakyat Banten pasca-runtuhnya Kesultanan Banten pada tahun 1813 oleh kekuasaan kolonial Inggris dan Belanda.",
-                "Bencana alam dahsyat letusan Gunung Krakatau pada 27 Agustus 1883 merusak pertanian secara luas, disusul tsunami besar yang meluluhlantakkan Anyer dan Carita.",
-                "Selama 5 tahun berturut-turut pasca-letusan Krakatau (1883-1888), rakyat Banten didera kelaparan hebat, penyakit pes manusia, serta wabah penyakit ternak (sampar sapi).",
-                "Alih-alih membantu meringankan penderitaan rakyat, pemerintah kolonial Hindia Belanda justru menetapkan berbagai jenis pajak baru yang mencekik mata pencaharian warga."
+                "Geger Cilegon 1888 dipicu oleh penderitaan mendalam rakyat Banten pasca-runtuhnya Kesultanan Banten pada tahun 1813.",
+                "Letusan Gunung Krakatau pada 27 Agustus 1883 merusak pertanian secara luas dan menimbulkan kelaparan hebat.",
+                "Pemerintah kolonial Hindia Belanda justru menetapkan berbagai jenis pajak baru yang mencekik mata pencaharian warga."
             ],
             2: [
-                "Perlawanan diorganisir oleh para ulama karismatik Banten seperti KH. Wasyid, Haji Ishak, Tubagus Ismail, dan Haji Usman yang memimpin jemaah tarekat dan santri.",
-                "Para ulama mengadakan musyawarah rahasia di berbagai tempat ibadah untuk menyatukan tekad membela rakyat dari kesewenang-wenangan pajak kolonial.",
-                "Rakyat Banten menolak tunduk pada aturan pajak denda pasar, pajak kepala, dan larangan penggunaan atribut keagamaan tertentu oleh pemerintah kolonial.",
-                "Solidaritas keagamaan dan nasionalisme lokal menjadi kekuatan utama yang mengikat para petani, pedagang, dan santri dalam barisan perlawanan."
+                "Perlawanan diorganisir oleh para ulama karismatik Banten seperti KH. Wasyid, Haji Ishak, dan Tubagus Ismail.",
+                "Para ulama mengadakan musyawarah rahasia di berbagai tempat ibadah untuk menyatukan tekad membela rakyat."
             ],
             3: [
-                "Puncak perlawanan meletus pada dini hari 9 Juli 1888, di mana gelombang massa pejuang bergerak menyerbu pos-pos pertahanan dan kediaman pejabat kolonial di Cilegon.",
-                "Banyak pejabat kolonial dan wedana yang pro-Belanda kocar-kacir menghadapi serbuan pejuang yang mengumandangkan takbir di bawah komando ulama.",
-                "Pertempuran sengit terjadi di sekitar alun-alun dan gedung-gedung pemerintahan Cilegon, menunjukkan keberanian luar biasa pejuang bersenjata tradisional.",
-                "Aksi heroik ini menggetarkan pemerintah pusat Hindia Belanda di Batavia yang langsung mengirimkan bala bantuan militer besar-besaran."
+                "Puncak perlawanan meletus pada dini hari 9 Juli 1888, di mana pejuang menyerbu pos-pos pertahanan kolonial di Cilegon."
             ],
             4: [
-                "Meski akhirnya berhasil dipadamkan dengan kekuatan senjata modern Belanda, Geger Cilegon membuktikan keteguhan moral rakyat Banten menolak tirani.",
-                "Para pemimpin pejuang yang ditangkap diadili secara militer; banyak yang dijatuhi hukuman mati di tiang gantung atau diasingkan ke berbagai pulau di Nusantara.",
-                "Peristiwa heroik Geger Cilegon 1888 abadi dalam sejarah sebagai salah satu tonggak perlawanan kolosal rakyat menentang imperialisme di tanah air.",
-                "Semangat juang para pahlawan Banten terus hidup menginspirasi generasi penerus untuk menjaga kemerdekaan, keadilan, dan kedaulatan bangsa."
+                "Meski berhasil dipadamkan, Geger Cilegon abadi dalam sejarah sebagai tonggak perlawanan kolosal menentang imperialisme."
             ]
         };
 
@@ -915,26 +839,26 @@
             1: [
                 { q: "Kapan peristiwa pemberontakan Geger Cilegon meletus?", options: ["1888", "1945", "1908", "1928"], correct: 0 },
                 { q: "Siapa ulama pejuang terkenal yang memimpin perlawanan Geger Cilegon?", options: ["KH. Hasyim Asy'ari", "KH. Wasyid", "Pangeran Diponegoro", "Sultan Ageng Tirtayasa"], correct: 1 },
-                { q: "Bencana alam besar apa yang melanda Banten pada tahun 1883 sebelum peristiwa Geger Cilegon?", options: ["Letusan Gunung Krakatau", "Gempa Yogyakarta", "Tsunami Aceh", "Banjir Bandang Jakarta"], correct: 0 },
-                { q: "Apa salah satu penyebab utama kemarahan rakyat Banten terhadap pemerintah kolonial Belanda?", options: ["Pembangunan jalan tol", "Pemberlakuan pajak baru yang mencekik dan penderitaan pasca-bencana", "Larangan berbicara bahasa daerah", "Kewajiban memakai seragam sekolah"], correct: 1 }
+                { q: "Bencana alam besar apa yang melanda Banten pada tahun 1883?", options: ["Letusan Gunung Krakatau", "Gempa Yogyakarta", "Tsunami Aceh", "Banjir Bandang"], correct: 0 },
+                { q: "Apa penyebab utama kemarahan rakyat Banten terhadap kolonial?", options: ["Pajak baru yang mencekik", "Pembangunan jalan", "Larangan bahasa", "Seragam sekolah"], correct: 0 }
             ],
             2: [
-                { q: "Siapa tokoh ulama selain KH. Wasyid yang menjadi motor penggerak perlawanan di Cilegon?", options: ["Haji Ishak dan Tubagus Ismail", "Ki Hajar Dewantara", "Bung Tomo", "Imam Bonjol"], correct: 0 },
-                { q: "Dimana para pejuang Geger Cilegon sering mengadakan pertemuan rahasia untuk merencanakan perlawanan?", options: ["Di masjid-masjid dan pesantren", "Di kantor keresidenan Belanda", "Di stasiun kereta api", "Di pelabuhan Sunda Kelapa"], correct: 0 },
-                { q: "Apa bentuk penolakan awal rakyat Banten terhadap pajak kolonial selain unjuk rasa?", options: ["Tidak membayar pajak dan melakukan boikot", "Membayar dua kali lipat", "Membuat mata uang sendiri", "Pindah ke pulau lain"], correct: 0 },
-                { q: "Negara kolonial mana yang dihadapi oleh rakyat Banten dalam peristiwa Geger Cilegon?", options: ["Belanda (Hindia Belanda)", "Spanyol", "Portugis", "Jepang"], correct: 0 }
+                { q: "Siapa tokoh ulama selain KH. Wasyid yang menggerakkan perlawanan?", options: ["Haji Ishak dan Tubagus Ismail", "Ki Hajar Dewantara", "Bung Tomo", "Imam Bonjol"], correct: 0 },
+                { q: "Dimana para pejuang mengadakan pertemuan rahasia?", options: ["Di masjid-masjid dan pesantren", "Di stasiun", "Di pelabuhan", "Di pasar"], correct: 0 },
+                { q: "Apa bentuk penolakan rakyat Banten?", options: ["Tidak membayar pajak dan boikot", "Membayar dua kali", "Pindah pulau", "Membuat mata uang"], correct: 0 },
+                { q: "Negara kolonial mana yang dihadapi?", options: ["Belanda", "Spanyol", "Portugis", "Jepang"], correct: 0 }
             ],
             3: [
-                { q: "Pada tanggal berapakah puncak penyerangan besar-besaran Geger Cilegon dimulai?", options: ["9 Juli 1888", "17 Agustus 1945", "28 Oktober 1928", "1 Juni 1945"], correct: 0 },
-                { q: "Kantor atau bangunan penting apa saja yang menjadi sasaran utama penyerangan para pejuang di Cilegon?", options: ["Kantor Asisten Residen dan rumah pejabat kolonial", "Pabrik garmen modern", "Bioskop kota", "Rumah sakit umum"], correct: 0 },
-                { q: "Apa simbol semangat perjuangan yang dikobarkan oleh para ulama selama pertempuran?", options: ["Pekikan takbir dan semangat jihad", "Lomba lari maraton", "Pertunjukan seni tari", "Pameran dagang"], correct: 0 },
-                { q: "Bagaimana taktik pertempuran yang digunakan oleh pejuang Banten melawan senjata api modern Belanda?", options: ["Serangan mendadak bergerilya dengan senjata tradisional", "Perang posisi artileri jarak jauh", "Perang laut terbuka", "Diplomasi meja bundar"], correct: 0 }
+                { q: "Tanggal berapakah puncak penyerangan Geger Cilegon dimulai?", options: ["9 Juli 1888", "17 Agustus 1945", "28 Oktober 1928", "1 Juni"], correct: 0 },
+                { q: "Bangunan apa yang menjadi sasaran utama pejuang?", options: ["Kantor Asisten Residen & rumah pejabat", "Pabrik modern", "Bioskop", "Rumah sakit"], correct: 0 },
+                { q: "Apa simbol semangat perjuangan pejuang?", options: ["Pekikan takbir", "Lomba lari", "Tari daerah", "Pameran dagang"], correct: 0 },
+                { q: "Bagaimana taktik pertempuran pejuang?", options: ["Serangan mendadak bergerilya", "Artileri jauh", "Perang laut", "Diplomasi"], correct: 0 }
             ],
             4: [
-                { q: "Apa hukuman yang dijatuhkan oleh pemerintah kolonial kepada para pemimpin utama Geger Cilegon yang tertangkap?", options: ["Hukuman mati atau dibuang (diasingkan) ke luar Jawa", "Hukuman denda ringan", "Hukuman kerja bakti seminggu", "Bebas bersyarat"], correct: 0 },
-                { q: "Meskipun berhasil ditumpas secara militer, apa warisan terpenting dari peristiwa Geger Cilegon bagi bangsa Indonesia?", options: ["Semangat perlawanan terhadap penindasan kolonial dan ketidakadilan", "Sistem pajak modern", "Teknologi kereta uap", "Arsitektur bangunan Eropa"], correct: 0 },
-                { q: "Provinsi manakah letak wilayah Cilegon tempat terjadinya peristiwa bersejarah ini saat ini?", options: ["Banten", "Jawa Timur", "Sumatera Barat", "Bali"], correct: 0 },
-                { q: "Nilai luhur apa yang dapat teladani dari para pejuang Geger Cilegon 1888?", options: ["Keberanian membela kebenaran dan cinta tanah air", "Sikap egois dan mementingkan diri sendiri", "Ketakutan menghadapi tantangan", "Kepedulian pada harta semata"], correct: 0 }
+                { q: "Hukuman apa yang dijatuhkan kolonial kepada pemimpin tertangkap?", options: ["Hukuman mati atau dibuang ke luar Jawa", "Denda ringan", "Kerja bakti seminggu", "Bebas"], correct: 0 },
+                { q: "Warisan terpenting Geger Cilegon bagi bangsa?", options: ["Semangat perlawanan terhadap penindasan", "Pajak modern", "Kereta uap", "Arsitektur"], correct: 0 },
+                { q: "Provinsi letak Cilegon saat ini?", options: ["Banten", "Jawa Timur", "Sumatera Barat", "Bali"], correct: 0 },
+                { q: "Nilai luhur para pejuang?", options: ["Keberanian membela kebenaran & cinta tanah air", "Egois", "Takut", "Harta"], correct: 0 }
             ]
         };
 
@@ -961,18 +885,16 @@
         let active3DJumps = []; 
 
         let pointerStartX = 0, pointerStartY = 0, pointerStartTime = 0;
-
-        let roomData = {
-            1: { host: null, maxPlayers: 4, code: "-" },
-            2: { host: null, maxPlayers: 4, code: "-" },
-            3: { host: null, maxPlayers: 4, code: "-" },
-            4: { host: null, maxPlayers: 4, code: "-" }
-        };
         let activePlayerName = "Alfan";
+        let activeRoomNum = null;
+        let activeRoomCode = null;
+        let roomUnsubscribe = null;
+        let isOnlineMode = false;
         let activeQuizPlayer = null;
         let currentQuizIndex = 0;
         let activePlayerForSnippet = null;
         let onInfoCloseCb = null;
+        let tempSelectedRoomForJoin = null;
 
         function isModalOpen() {
             const modals = document.querySelectorAll('.modal-overlay');
@@ -997,7 +919,9 @@
             const duration = performance.now() - pointerStartTime;
 
             if (distance < 15 && duration < 300) {
-                handlePlayerStep(0);
+                // Find current user's player index
+                const myPlayerIdx = players.findIndex(p => p.isLocal || p.userId === userId || p.name === activePlayerName);
+                handlePlayerStep(myPlayerIdx !== -1 ? myPlayerIdx : 0);
             }
         };
 
@@ -1042,8 +966,6 @@
         function randomizePath() {
             const coords = getLevelCoords(currentLevel);
             pathData = [];
-            
-            // Reservasi indeks khusus (Start, Finish, dan gerbang NPC di 10, 20, 30, 40, 50) agar tidak tertumpuk item
             const reservedIndices = new Set([0, coords.length - 1, 10, 20, 30, 40, 50]);
             let middleIndices = [];
             for(let i = 1; i < coords.length - 1; i++) {
@@ -1163,7 +1085,7 @@
                 scene3D.add(tileMesh);
                 cellMeshes3D[idx] = tileMesh;
 
-                if (idx === 10 || idx === 20 || idx === 30 || idx === 40 || idx === 50 || idx === 70) {
+                if (idx === 10 || idx === 20 || idx === 30 || idx === 40 || idx === 50) {
                     const toriiMaterial = new THREE.MeshStandardMaterial({ color: 0xd9381e, flatShading: true });
                     const blackMaterial = new THREE.MeshStandardMaterial({ color: 0x222222, flatShading: true });
                     const toriiGroup = new THREE.Group();
@@ -1188,20 +1110,11 @@
                     nuki.castShadow = true;
 
                     toriiGroup.add(pillarLeft, pillarRight, kasagi, nuki);
-
-                    // Tambahkan sprite tokoh sejarah (👳🏻‍♂️) berdiri di tengah gerbang penjaga
                     const figureSprite = createEmojiSprite('👳🏻‍♂️');
                     figureSprite.scale.set(1.5, 1.5, 1);
                     figureSprite.position.set(0, 1.5, 0);
                     toriiGroup.add(figureSprite);
-
                     toriiGroup.position.set(pos.x, 0, pos.z);
-
-                    if (idx + 1 < pathData.length) {
-                        const nextPos = gridTo3DSpace(pathData[idx+1].r, pathData[idx+1].c);
-                        toriiGroup.rotation.y = Math.atan2(nextPos.x - pos.x, nextPos.z - pos.z);
-                    }
-
                     scene3D.add(toriiGroup);
                 }
 
@@ -1253,10 +1166,12 @@
                 const jump = active3DJumps[idx];
                 if (!pawn) return;
 
-                const currIdx = player.position;
+                const currIdx = player.position || 0;
                 const nextIdx = Math.min(currIdx + 1, pathData.length - 1);
                 const currCoord = pathData[currIdx];
                 const nextCoord = pathData[nextIdx];
+                if (!currCoord || !nextCoord) return;
+                
                 const cPos = gridTo3DSpace(currCoord.r, currCoord.c);
                 const nPos = gridTo3DSpace(nextCoord.r, nextCoord.c);
 
@@ -1279,7 +1194,8 @@
                     const pz = jump.startZ + (jump.targetZ - jump.startZ) * t;
                     pawn.position.set(px, py, pz);
                 } else {
-                    const targetCoord = pathData[player.position];
+                    const targetCoord = pathData[player.position || 0];
+                    if (!targetCoord) return;
                     const targetPos = gridTo3DSpace(targetCoord.r, targetCoord.c);
                     pawn.position.x += ((targetPos.x + (idx * 0.3)) - pawn.position.x) * 0.2;
                     pawn.position.z += ((targetPos.z + (idx * 0.3)) - pawn.position.z) * 0.2;
@@ -1290,34 +1206,36 @@
             const followPawn = playerPawns3D[activeFollowPlayerIndex] || playerPawns3D[0];
             const followPlayer = players[activeFollowPlayerIndex] || players[0];
             if (followPawn && followPlayer) {
-                const currIdx = followPlayer.position;
+                const currIdx = followPlayer.position || 0;
                 const nextIdx = Math.min(currIdx + 1, pathData.length - 1);
                 const currCoord = pathData[currIdx];
                 const nextCoord = pathData[nextIdx];
-                const cPos = gridTo3DSpace(currCoord.r, currCoord.c);
-                const nPos = gridTo3DSpace(nextCoord.r, nextCoord.c);
+                if (currCoord && nextCoord) {
+                    const cPos = gridTo3DSpace(currCoord.r, currCoord.c);
+                    const nPos = gridTo3DSpace(nextCoord.r, nextCoord.c);
 
-                const dir = new THREE.Vector3(nPos.x - cPos.x, 0, nPos.z - cPos.z);
-                if (dir.lengthSq() < 0.001) {
-                    dir.set(0, 0, -1);
-                } else {
-                    dir.normalize();
+                    const dir = new THREE.Vector3(nPos.x - cPos.x, 0, nPos.z - cPos.z);
+                    if (dir.lengthSq() < 0.001) {
+                        dir.set(0, 0, -1);
+                    } else {
+                        dir.normalize();
+                    }
+
+                    const targetCamX = followPawn.position.x - dir.x * 6.5;
+                    const targetCamZ = followPawn.position.z - dir.z * 6.5;
+                    const targetCamY = followPawn.position.y + 3.8;
+
+                    currentCamPos.x += (targetCamX - currentCamPos.x) * 0.08;
+                    currentCamPos.y += (targetCamY - currentCamPos.y) * 0.08;
+                    currentCamPos.z += (targetCamZ - currentCamPos.z) * 0.08;
+                    camera3D.position.copy(currentCamPos);
+
+                    const lookTargetX = followPawn.position.x + dir.x * 1.5;
+                    const lookTargetY = followPawn.position.y + 1.0;
+                    const lookTargetZ = followPawn.position.z + dir.z * 1.5;
+                    currentCamTarget.set(lookTargetX, lookTargetY, lookTargetZ);
+                    camera3D.lookAt(currentCamTarget);
                 }
-
-                const targetCamX = followPawn.position.x - dir.x * 6.5;
-                const targetCamZ = followPawn.position.z - dir.z * 6.5;
-                const targetCamY = followPawn.position.y + 3.8;
-
-                currentCamPos.x += (targetCamX - currentCamPos.x) * 0.08;
-                currentCamPos.y += (targetCamY - currentCamPos.y) * 0.08;
-                currentCamPos.z += (targetCamZ - currentCamPos.z) * 0.08;
-                camera3D.position.copy(currentCamPos);
-
-                const lookTargetX = followPawn.position.x + dir.x * 1.5;
-                const lookTargetY = followPawn.position.y + 1.0;
-                const lookTargetZ = followPawn.position.z + dir.z * 1.5;
-                currentCamTarget.set(lookTargetX, lookTargetY, lookTargetZ);
-                camera3D.lookAt(currentCamTarget);
             }
 
             renderer3D.render(scene3D, camera3D);
@@ -1327,23 +1245,23 @@
             const tbody = document.getElementById('leaderboard-body');
             if(!tbody) return;
             tbody.innerHTML = '';
-            players.forEach(p => {
-                const isFinished = p.position >= pathData.length - 1;
+            players.forEach((p, idx) => {
+                const isFinished = (p.position || 0) >= pathData.length - 1;
                 const tr = document.createElement('tr');
-                tr.className = `score-row ${activeFollowPlayerIndex === p.id ? 'active' : ''}`;
+                tr.className = `score-row ${activeFollowPlayerIndex === idx ? 'active' : ''}`;
                 tr.innerHTML = `
                     <td>
                         <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full border-2 border-slate-700 flex justify-center items-center text-xs cursor-pointer" style="background:${p.color}" onclick="setFollowPlayer(${p.id})" title="Klik untuk ikuti kamera">${p.emoji}</div>
+                            <div class="w-6 h-6 rounded-full border-2 border-slate-700 flex justify-center items-center text-xs cursor-pointer" style="background:${p.color || '#ebb434'}" onclick="setFollowPlayer(${idx})" title="Klik untuk ikuti kamera">${p.emoji || '🧑'}</div>
                             <div>
-                                <span class="font-bold cursor-pointer hover:underline" onclick="setFollowPlayer(${p.id})">${p.name}</span>
-                                <div class="text-[10px] text-slate-500">Lvl ${currentLevel} | Pos: ${p.position}/${pathData.length-1} | Poin: ${p.score}</div>
+                                <span class="font-bold cursor-pointer hover:underline" onclick="setFollowPlayer(${idx})">${p.name}</span>
+                                <div class="text-[10px] text-slate-500">Lvl ${currentLevel} | Pos: ${p.position || 0}/${pathData.length-1} | Poin: ${p.score || 0}</div>
                             </div>
                         </div>
                     </td>
                     <td class="text-center font-bold text-slate-500">${p.snippetsCollected || 0}</td>
                     <td class="text-right">
-                        <button onclick="handlePlayerStep(${p.id})" ${isFinished ? 'disabled' : ''} class="bg-green-500 hover:bg-green-600 active:translate-y-0.5 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow border border-green-700 transition-all">
+                        <button onclick="handlePlayerStep(${idx})" ${isFinished ? 'disabled' : ''} class="bg-green-500 hover:bg-green-600 active:translate-y-0.5 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow border border-green-700 transition-all">
                             ${isFinished ? 'Finis 🏁' : 'Melangkah ➡️'}
                         </button>
                     </td>
@@ -1352,7 +1270,7 @@
             });
         }
 
-        function setFollowPlayer(playerIdx) {
+        window.setFollowPlayer = function(playerIdx) {
             activeFollowPlayerIndex = playerIdx;
             updateLeaderboard();
         }
@@ -1362,28 +1280,33 @@
         async function handlePlayerStep(playerIdx) {
             if (isModalOpen()) return;
             const p = players[playerIdx];
-            if (!p || p.position >= pathData.length - 1) return;
+            if (!p || (p.position || 0) >= pathData.length - 1) return;
 
             activeFollowPlayerIndex = playerIdx;
             updateLeaderboard();
 
-            const prevPos = p.position;
-            p.position++;
+            const prevPos = p.position || 0;
+            p.position = prevPos + 1;
             trigger3DStepJump(playerIdx, prevPos, p.position);
             AudioHelper.playStep();
             await sleep(320);
-            await handleTileAction(p);
+            await handleTileAction(p, playerIdx);
+
+            if (isOnlineMode && db && activeRoomNum) {
+                syncRoomStateToFirestore();
+            }
         }
 
         window.addEventListener('keydown', (e) => {
             if (isModalOpen()) return;
             if (['ArrowUp', 'w', 'W'].includes(e.key)) {
                 e.preventDefault();
-                handlePlayerStep(0);
+                const myIdx = players.findIndex(p => p.userId === userId || p.name === activePlayerName);
+                handlePlayerStep(myIdx !== -1 ? myIdx : 0);
             }
         });
 
-        async function handleTileAction(player) {
+        async function handleTileAction(player, playerIdx) {
             const tile = pathData[player.position];
             if (!tile) return;
             
@@ -1391,38 +1314,31 @@
                 if (!player.visitedNPCs) player.visitedNPCs = {};
                 player.visitedNPCs[player.position] = true;
                 const npcData = npcDialogues[player.position];
-                const personalizedText = npcData.text.replace("Alfan", player.name);
-                showInfoModal(`👳🏻‍♂️ Tokoh Sejarah: ${npcData.npc}`, `<div class="italic text-indigo-700 font-semibold mb-2 leading-relaxed">"${personalizedText}"</div>`);
+                showInfoModal(`👳🏻‍♂️ Tokoh Sejarah: ${npcData.npc}`, `<div class="italic text-indigo-700 font-semibold mb-2 leading-relaxed">"${npcData.text}"</div>`);
                 return;
             }
             
             if (tile.type === 'treasure') {
                 showSnippetModal(player);
-                return;
             } 
             else if (tile.type === 'bonus') {
-                player.score += tile.val;
+                player.score = (player.score || 0) + tile.val;
                 showInfoModal('⭐ BONUS!', `Selamat! ${player.name} mendapat ${tile.val} poin!`);
-                return;
             }
             else if (tile.type === 'hotspring') {
-                player.score = Math.max(0, player.score + tile.val);
+                player.score = Math.max(0, (player.score || 0) + tile.val);
                 showInfoModal('♨️ AIR PANAS!', `Aduh! ${player.name} terkena ubin Air Panas dan kehilangan ${Math.abs(tile.val)} poin!`);
-                return;
             }
             else if (tile.type === 'lightning') {
-                player.score = Math.max(0, player.score + tile.val);
+                player.score = Math.max(0, (player.score || 0) + tile.val);
                 showInfoModal('⚡ PETIR!', `Waduh! ${player.name} tersambar Petir dan kehilangan ${Math.abs(tile.val)} poin!`);
-                return;
             }
             else if (tile.type === 'radiation') {
-                player.score = Math.max(0, player.score + tile.val);
+                player.score = Math.max(0, (player.score || 0) + tile.val);
                 showInfoModal('☣️ RADIASI!', `Bahaya! ${player.name} terpapar area Radiasi dan kehilangan ${Math.abs(tile.val)} poin!`);
-                return;
             }
             else if (tile.type === 'finish') {
                 startFinishQuiz(player);
-                return;
             }
             updateLeaderboard();
         }
@@ -1462,20 +1378,17 @@
                 currentQuizIndex++;
                 if (currentQuizIndex >= quizList.length) {
                     document.getElementById('quiz-modal').classList.remove('show');
-                    
                     if (currentLevel < 4) {
-                        showLevelCompleteModal(`🎉 LEVEL ${currentLevel} SELESAI!`, `Hebat! ${activeQuizPlayer.name} berhasil menaklukkan kuis Level ${currentLevel}!<br><b>Bersiap memasuki Level ${currentLevel + 1} dengan jalur lebih panjang dan rintangan lebih menantang!</b>`, () => {
+                        showLevelCompleteModal(`🎉 LEVEL ${currentLevel} SELESAI!`, `Hebat! ${activeQuizPlayer.name} berhasil menaklukkan kuis Level ${currentLevel}!<br><b>Bersiap memasuki Level ${currentLevel + 1}!</b>`, () => {
                             currentLevel++;
                             const badge = document.getElementById('level-display-badge');
                             if(badge) badge.innerText = `Level ${currentLevel}`;
                             players.forEach(p => { p.position = 0; });
                             randomizePath();
-                            if (animationFrameId3D) {
-                                cancelAnimationFrame(animationFrameId3D);
-                                animationFrameId3D = null;
-                            }
+                            if (animationFrameId3D) { cancelAnimationFrame(animationFrameId3D); animationFrameId3D = null; }
                             init3D();
                             updateLeaderboard();
+                            if (isOnlineMode && db && activeRoomNum) syncRoomStateToFirestore();
                         });
                     } else {
                         showWinnerModal();
@@ -1486,13 +1399,12 @@
             } else {
                 AudioHelper.playSelect();
                 document.getElementById('quiz-modal').classList.remove('show');
-                const prevPos = activeQuizPlayer.position;
-                activeQuizPlayer.position = Math.max(0, activeQuizPlayer.position - 4);
-                
-                trigger3DStepJump(activeQuizPlayer.id, prevPos, activeQuizPlayer.position);
+                const prevPos = activeQuizPlayer.position || 0;
+                activeQuizPlayer.position = Math.max(0, prevPos - 4);
+                trigger3DStepJump(activeQuizPlayer.id || 0, prevPos, activeQuizPlayer.position);
                 updateLeaderboard();
-
-                showInfoModal('❌ JAWABAN SALAH!', `Sayang sekali, ${activeQuizPlayer.name} menjawab salah pada pertanyaan #${currentQuizIndex + 1}!<br><b>Mundur 4 langkah ke posisi ${activeQuizPlayer.position}!</b>`);
+                showInfoModal('❌ JAWABAN SALAH!', `Sayang sekali, ${activeQuizPlayer.name} menjawab salah!<br><b>Mundur 4 langkah ke posisi ${activeQuizPlayer.position}!</b>`);
+                if (isOnlineMode && db && activeRoomNum) syncRoomStateToFirestore();
             }
         }
 
@@ -1506,10 +1418,11 @@
 
         async function claimSnippetPoints() {
             AudioHelper.playSelect();
-            activePlayerForSnippet.score += 10;
+            activePlayerForSnippet.score = (activePlayerForSnippet.score || 0) + 10;
             activePlayerForSnippet.snippetsCollected = (activePlayerForSnippet.snippetsCollected || 0) + 1;
             document.getElementById('snippet-modal').classList.remove('show');
             updateLeaderboard();
+            if (isOnlineMode && db && activeRoomNum) syncRoomStateToFirestore();
         }
 
         function showInfoModal(title, text, onClose) {
@@ -1546,14 +1459,14 @@
         }
 
         function showWinnerModal() {
-            const standings = [...players].sort((a,b) => b.score - a.score);
+            const standings = [...players].sort((a,b) => (b.score || 0) - (a.score || 0));
             const container = document.getElementById('final-standings');
             container.innerHTML = '';
             standings.forEach((p) => {
                 container.innerHTML += `
                     <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200">
                         <span class="font-bold text-lg">🏆 ${p.name}</span>
-                        <span class="font-heading text-xl text-slate-700">${p.score} Poin (Lvl 4 Tamat)</span>
+                        <span class="font-heading text-xl text-slate-700">${p.score || 0} Poin (Tamat)</span>
                     </div>
                 `;
             });
@@ -1566,21 +1479,18 @@
             currentLevel = 1;
             const badge = document.getElementById('level-display-badge');
             if(badge) badge.innerText = `Level ${currentLevel}`;
-            players.forEach(p => {
-                p.position = 0;
-                p.score = 0;
-                p.snippetsCollected = 0;
-            });
+            players.forEach(p => { p.position = 0; p.score = 0; p.snippetsCollected = 0; });
             randomizePath();
-            if (animationFrameId3D) {
-                cancelAnimationFrame(animationFrameId3D);
-                animationFrameId3D = null;
-            }
+            if (animationFrameId3D) { cancelAnimationFrame(animationFrameId3D); animationFrameId3D = null; }
             init3D();
             updateLeaderboard();
+            if (isOnlineMode && db && activeRoomNum) syncRoomStateToFirestore();
         }
 
-        function showMenu() {
+        window.showMenu = function() {
+            if (roomUnsubscribe) { roomUnsubscribe(); roomUnsubscribe = null; }
+            isOnlineMode = false;
+            activeRoomNum = null;
             document.getElementById('screen-menu')?.classList.remove('hide-screen');
             document.getElementById('screen-setup')?.classList.add('hide-screen');
             document.getElementById('screen-name-input')?.classList.add('hide-screen');
@@ -1589,18 +1499,16 @@
             document.getElementById('screen-game')?.classList.add('hide-screen');
             document.getElementById('btn-back')?.classList.add('hide-screen');
             document.getElementById('hud-lives')?.classList.add('hide-screen');
+            document.getElementById('online-status-badge')?.classList.add('hidden');
             
-            if (animationFrameId3D) {
-                cancelAnimationFrame(animationFrameId3D);
-                animationFrameId3D = null;
-            }
+            if (animationFrameId3D) { cancelAnimationFrame(animationFrameId3D); animationFrameId3D = null; }
         }
 
-        function selectMode(numPlayers) {
+        window.selectMode = function(numPlayers) {
             AudioHelper.playSelect(); 
             selectedMode = numPlayers;
+            isOnlineMode = false;
             document.getElementById('screen-menu').classList.add('hide-screen');
-
             const setupContainer = document.getElementById('player-inputs');
             setupContainer.innerHTML = `
                 <div class="text-left bg-slate-50 p-3 rounded-xl border-2 border-slate-200">
@@ -1612,14 +1520,14 @@
             document.getElementById('btn-back').classList.remove('hide-screen');
         }
 
-        function selectMultiplayer() {
+        window.selectMultiplayer = function() {
             AudioHelper.playSelect();
             document.getElementById('screen-menu').classList.add('hide-screen');
             document.getElementById('screen-name-input').classList.remove('hide-screen');
             document.getElementById('btn-back').classList.remove('hide-screen');
         }
 
-        function handleStartGame() {
+        window.handleStartGame = function() {
             AudioHelper.playSelect();
             const inputEl = document.getElementById('player-name-input');
             activePlayerName = inputEl ? inputEl.value.trim() || 'Alfan' : 'Alfan';
@@ -1630,25 +1538,103 @@
             document.getElementById('screen-mp-setup').classList.remove('hide-screen');
         }
 
-        function handleBackToName() {
+        window.handleBackToName = function() {
             AudioHelper.playSelect();
             document.getElementById('screen-mp-setup').classList.add('hide-screen');
             document.getElementById('screen-name-input').classList.remove('hide-screen');
         }
 
-        function handleOpenLobby() {
+        window.handleOpenLobby = async function() {
             AudioHelper.playSelect();
             document.getElementById('screen-mp-setup').classList.add('hide-screen');
             document.getElementById('screen-select-room').classList.remove('hide-screen');
+            await fetchAndRenderRooms();
         }
 
-        function handleBackToSetup() {
+        window.handleBackToSetup = function() {
             AudioHelper.playSelect();
+            if (roomUnsubscribe) { roomUnsubscribe(); roomUnsubscribe = null; }
             document.getElementById('screen-select-room').classList.add('hide-screen');
             document.getElementById('screen-mp-setup').classList.remove('hide-screen');
         }
 
-        function handleCreateLobby() {
+        async function fetchAndRenderRooms() {
+            const container = document.getElementById('rooms-grid-container');
+            if (!container) return;
+            container.innerHTML = '<div class="col-span-2 text-center py-4 text-xs font-bold text-slate-500">Memuat room dari server...</div>';
+
+            try {
+                if (!db || !auth || !auth.currentUser) {
+                    container.innerHTML = '<div class="col-span-2 text-center py-4 text-xs font-bold text-rose-500">Cloud database tidak terhubung.</div>';
+                    return;
+                }
+                const roomsCol = collection(db, 'artifacts', appId, 'public', 'data', 'rooms');
+                const snapshot = await getDocs(roomsCol);
+                
+                container.innerHTML = '';
+                let roomMap = {};
+                snapshot.forEach(docSnap => {
+                    roomMap[docSnap.id] = docSnap.data();
+                });
+
+                for (let i = 1; i <= 4; i++) {
+                    const rData = roomMap[`room_${i}`];
+                    const hasHost = rData && rData.hostName;
+                    
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = `room-col-btn p-3 border-2 rounded-xl font-bold text-left flex flex-col justify-between cursor-pointer transition-all ${hasHost ? 'border-green-600 bg-green-50 text-green-900 shadow-sm' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'}`;
+                    btn.onclick = () => promptJoinRoom(i, rData);
+                    
+                    btn.innerHTML = `
+                        <div class="flex justify-between items-center w-full">
+                            <span class="text-sm font-heading">Room ${i}</span>
+                            <span class="text-[10px] ${hasHost ? 'bg-green-600 text-white' : 'bg-slate-300 text-slate-700'} px-1.5 py-0.5 rounded font-bold">${hasHost ? `Aktif (${rData.players?.length || 1}/${rData.maxPlayers})` : 'Kosong'}</span>
+                        </div>
+                        <div class="mt-2 text-xs opacity-90 truncate">Host: <span class="italic font-bold">${hasHost ? rData.hostName : '-'}</span></div>
+                        <div class="mt-1 text-xs opacity-90 text-indigo-600">🔒 ${hasHost ? 'Ketuk untuk Masuk' : 'Belum Ada Room'}</div>
+                    `;
+                    container.appendChild(btn);
+                }
+            } catch (e) {
+                console.error("Error fetching rooms:", e);
+                container.innerHTML = '<div class="col-span-2 text-center py-4 text-xs font-bold text-rose-500">Gagal memuat room online.</div>';
+            }
+        }
+
+        window.promptJoinRoom = function(roomNum, roomDataObj) {
+            AudioHelper.playSelect();
+            if (!roomDataObj || !roomDataObj.hostName) {
+                showInfoModal("Room Kosong", `Room ${roomNum} belum dibuat oleh pemain manapun. Silakan buat room terlebih dahulu!`);
+                return;
+            }
+            tempSelectedRoomForJoin = { roomNum, roomDataObj };
+            document.getElementById('modal-join-room-title').innerText = `Room ${roomNum} (Host: ${roomDataObj.hostName})`;
+            document.getElementById('join-room-code-input').value = '';
+            document.getElementById('room-code-join-modal').classList.add('show');
+        }
+
+        window.closeJoinCodeModal = function() {
+            document.getElementById('room-code-join-modal').classList.remove('show');
+            tempSelectedRoomForJoin = null;
+        }
+
+        window.verifyAndJoinRoom = async function() {
+            AudioHelper.playSelect();
+            const enteredCode = document.getElementById('join-room-code-input').value.trim().toUpperCase();
+            if (!tempSelectedRoomForJoin) return;
+            
+            const { roomNum, roomDataObj } = tempSelectedRoomForJoin;
+            if (enteredCode !== roomDataObj.code) {
+                showInfoModal("Kode Salah", "Kode ruang yang kamu masukkan salah! Mohon tanyakan kode rahasia kepada host.");
+                return;
+            }
+
+            closeJoinCodeModal();
+            await joinOnlineRoom(roomNum, roomDataObj);
+        }
+
+        window.handleCreateLobby = async function() {
             AudioHelper.playSelect();
             const roomNumSelect = document.getElementById('room-number-select');
             const countEl = document.getElementById('room-player-count');
@@ -1658,90 +1644,98 @@
             const count = countEl ? parseInt(countEl.value) : 4;
             const roomCode = codeEl ? codeEl.value.toUpperCase() : "LAB123";
 
-            roomData[roomNum] = {
-                host: activePlayerName,
-                maxPlayers: count,
-                code: roomCode
+            activeRoomNum = roomNum;
+            activeRoomCode = roomCode;
+            selectedMode = count;
+            isOnlineMode = true;
+
+            const newPlayer = {
+                userId: userId,
+                name: activePlayerName,
+                color: playerConfigs[0].color,
+                emoji: playerConfigs[0].emoji,
+                position: 0,
+                score: 0,
+                snippetsCollected: 0,
+                isHost: true
             };
 
-            updateRoomUI(roomNum);
-            selectRoomCol(roomNum);
+            players = [newPlayer];
 
-            document.getElementById('screen-mp-setup').classList.add('hide-screen');
-            document.getElementById('screen-select-room').classList.remove('hide-screen');
-            showInfoModal("Lobby Berhasil Dibuat", `Berhasil membuat Lobby di Room ${roomNum} oleh ${activePlayerName} (${count} Pemain, Kode: ${roomCode})!`);
-        }
-
-        function updateRoomUI(roomNum) {
-            const hostSpan = document.getElementById(`host-room-${roomNum}`);
-            const badgeSpan = document.getElementById(`badge-room-${roomNum}`);
-            const codeSpan = document.getElementById(`code-room-${roomNum}`);
-            const roomInfo = roomData[roomNum];
-
-            if (hostSpan && badgeSpan && codeSpan && roomInfo) {
-                if (roomInfo.host) {
-                    hostSpan.innerText = roomInfo.host;
-                    hostSpan.className = "font-extrabold text-green-700";
-                    codeSpan.innerText = roomInfo.code;
-                    badgeSpan.innerText = `Aktif (${roomInfo.maxPlayers}P)`;
-                    badgeSpan.className = "text-[10px] bg-green-600 text-white px-1.5 py-0.5 rounded font-bold";
+            try {
+                if (db && auth && auth.currentUser) {
+                    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', `room_${roomNum}`);
+                    await setDoc(roomRef, {
+                        roomNum: roomNum,
+                        hostName: activePlayerName,
+                        code: roomCode,
+                        maxPlayers: count,
+                        status: 'waiting',
+                        currentLevel: 1,
+                        players: players
+                    });
                 }
-            }
-        }
-
-        function selectRoomCol(roomNum) {
-            AudioHelper.playSelect();
-            document.querySelectorAll('.room-col-btn').forEach(btn => {
-                btn.className = "room-col-btn p-3 border-2 border-slate-300 rounded-xl bg-white text-slate-700 hover:bg-slate-100 font-bold text-left flex flex-col justify-between cursor-pointer";
-            });
-            const selectedBtn = document.querySelector(`[data-room="${roomNum}"]`);
-            if (selectedBtn) {
-                selectedBtn.className = "room-col-btn p-3 border-2 border-green-600 rounded-xl bg-green-50 text-green-900 font-bold shadow-sm text-left flex flex-col justify-between cursor-pointer";
-            }
-            const selectedInput = document.getElementById('room-selected-input');
-            if (selectedInput) selectedInput.value = roomNum;
-        }
-
-        function handleConfirmRoom() {
-            AudioHelper.playSelect();
-            const selectedInput = document.getElementById('room-selected-input');
-            const roomSelected = selectedInput ? selectedInput.value : 1;
-            const roomInfo = roomData[roomSelected];
-            
-            if (!roomInfo || !roomInfo.host) {
-                showInfoModal("Room Kosong", `Room ${roomSelected} masih kosong! Silakan buat room terlebih dahulu.`);
-                return;
+            } catch (e) {
+                console.error("Error creating room on Firestore:", e);
             }
 
-            selectedMode = roomInfo.maxPlayers;
-            startMultiplayerGame(roomInfo);
+            startOnlineGameSession(roomNum, roomCode);
         }
 
-        function startMultiplayerGame(roomInfo) {
-            players = [];
-            currentLevel = 1;
-            const badge = document.getElementById('level-display-badge');
-            if(badge) badge.innerText = `Level ${currentLevel}`;
-            activeFollowPlayerIndex = 0;
+        async function joinOnlineRoom(roomNum, roomDataObj) {
+            activeRoomNum = roomNum;
+            activeRoomCode = roomDataObj.code;
+            selectedMode = roomDataObj.maxPlayers;
+            isOnlineMode = true;
 
-            for(let i=0; i<roomInfo.maxPlayers; i++) {
-                let name = i === 0 ? roomInfo.host : `Pemain ${i+1}`;
-                let cfg = playerConfigs[i % playerConfigs.length];
-                players.push({
-                    id: i,
-                    name: name,
-                    color: cfg.color,
-                    emoji: cfg.emoji,
+            let existingPlayers = roomDataObj.players || [];
+            // Check if user already joined
+            let existingIdx = existingPlayers.findIndex(p => p.userId === userId);
+            if (existingIdx === -1) {
+                if (existingPlayers.length >= roomDataObj.maxPlayers) {
+                    showInfoModal("Room Penuh", "Maaf, kapasitas room ini sudah penuh!");
+                    return;
+                }
+                const assignedConfig = playerConfigs[existingPlayers.length % playerConfigs.length];
+                existingPlayers.push({
+                    userId: userId,
+                    name: activePlayerName,
+                    color: assignedConfig.color,
+                    emoji: assignedConfig.emoji,
                     position: 0,
                     score: 0,
-                    hasLife: 3,
-                    snippetsCollected: 0
+                    snippetsCollected: 0,
+                    isHost: false
                 });
             }
 
-            document.getElementById('screen-select-room').classList.add('hide-screen');
+            players = existingPlayers;
+
+            try {
+                if (db && auth && auth.currentUser) {
+                    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', `room_${roomNum}`);
+                    await updateDoc(roomRef, { players: players });
+                }
+            } catch (e) {
+                console.error("Error joining room on Firestore:", e);
+            }
+
+            startOnlineGameSession(roomNum, roomDataObj.code);
+        }
+
+        function startOnlineGameSession(roomNum, roomCode) {
+            currentLevel = 1;
+            const badge = document.getElementById('level-display-badge');
+            if(badge) badge.innerText = `Level ${currentLevel}`;
+            
+            const badgeCode = document.getElementById('room-code-badge');
+            if(badgeCode) badgeCode.innerText = `Room ${roomNum} [${roomCode}]`;
+
+            document.getElementById('screen-mp-setup')?.classList.add('hide-screen');
+            document.getElementById('screen-select-room')?.classList.add('hide-screen');
             document.getElementById('screen-game').classList.remove('hide-screen');
             document.getElementById('hud-lives').classList.remove('hide-screen');
+            document.getElementById('online-status-badge').classList.remove('hidden');
 
             randomizePath();
 
@@ -1752,26 +1746,63 @@
                 init3D();
                 updateLeaderboard();
             }, 100);
+
+            setupRoomRealtimeListener(roomNum);
         }
 
-        function startGame() {
+        function setupRoomRealtimeListener(roomNum) {
+            if (!db) return;
+            if (roomUnsubscribe) roomUnsubscribe();
+
+            const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', `room_${roomNum}`);
+            roomUnsubscribe = onSnapshot(roomRef, (docSnap) => {
+                if (!docSnap.exists()) return;
+                const data = docSnap.data();
+                if (data && data.players) {
+                    // Update players state while preserving local animation states
+                    players = data.players;
+                    if (data.currentLevel && data.currentLevel !== currentLevel) {
+                        currentLevel = data.currentLevel;
+                        const badge = document.getElementById('level-display-badge');
+                        if(badge) badge.innerText = `Level ${currentLevel}`;
+                        randomizePath();
+                        init3D();
+                    }
+                    updateLeaderboard();
+                }
+            }, (error) => {
+                console.debug("Firestore snapshot error:", error);
+            });
+        }
+
+        function syncRoomStateToFirestore() {
+            if (!db || !activeRoomNum) return;
+            const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', `room_${activeRoomNum}`);
+            updateDoc(roomRef, {
+                players: players,
+                currentLevel: currentLevel
+            }).catch(e => console.debug("Sync error:", e));
+        }
+
+        window.startGame = function() {
             AudioHelper.playSelect();
+            isOnlineMode = false;
             players = [];
             currentLevel = 1;
             const badge = document.getElementById('level-display-badge');
             if(badge) badge.innerText = `Level ${currentLevel}`;
             activeFollowPlayerIndex = 0;
 
-            const nameInput = document.getElementById('pname-0').value.trim() || 'Alfan';
+            const nameInput = document.getElementById('pname-0')?.value.trim() || 'Alfan';
             players.push({
-                id: 0,
+                userId: userId,
                 name: nameInput,
                 color: playerConfigs[0].color,
                 emoji: playerConfigs[0].emoji,
                 position: 0,
                 score: 0,
-                hasLife: 3,
-                snippetsCollected: 0
+                snippetsCollected: 0,
+                isLocal: true
             });
 
             document.getElementById('screen-setup').classList.add('hide-screen');
@@ -1789,7 +1820,7 @@
             }, 100);
         }
 
-        function handleBackClick() {
+        window.handleBackClick = function() {
             AudioHelper.playSelect();
             const setupScreen = document.getElementById('screen-setup');
             const mpSetup = document.getElementById('screen-mp-setup');
@@ -1806,11 +1837,11 @@
             }
         }
 
-        function closeExitModal() {
+        window.closeExitModal = function() {
             document.getElementById('confirm-exit-modal').classList.remove('show');
         }
 
-        function confirmExit() {
+        window.confirmExit = function() {
             document.getElementById('confirm-exit-modal').classList.remove('show');
             showMenu();
         }
@@ -1834,12 +1865,12 @@
             }
         };
 
-        function toggleSound() {
+        window.toggleSound = function() {
             const isMuted = AudioHelper.toggleMute();
             document.getElementById('sound-icon').innerText = isMuted ? "🔇" : "🔊";
         }
 
-        function toggleRules() {
+        window.toggleRules = function() {
             AudioHelper.playSelect();
             const container = document.getElementById('rules-container');
             const fade = document.getElementById('rules-fade');
@@ -1857,7 +1888,7 @@
             }
         }
 
-        function toggleFullscreen() {
+        window.toggleFullscreen = function() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(() => {});
             } else {
