@@ -224,7 +224,7 @@
             <h3 class="font-heading text-xl text-yellow-700 mb-3 border-b-2 border-yellow-300 pb-2">📜 Aturan Main</h3>
             <div id="rules-container" class="max-h-36 overflow-hidden transition-all duration-500 relative">
                 <ol class="list-decimal pl-5 text-sm font-bold text-slate-700 space-y-2">
-                    <li>Selesaikan perjalanan dari Level 1 hingga <strong>Level 4</strong>!</li>
+                    <li>Selesaikan perjalanan melintasi <strong>Level 1 hingga Level 4</strong>!</li>
                     <li>Setiap naik level, panjang jalur dan jumlah rintangan akan semakin bertambah.</li>
                     <li>Melangkah maju dengan <strong>mengetuk langsung pada layar peta 3D</strong> atau menekan <strong>Panah Atas / W</strong> di keyboard.</li>
                     <li>Di garis <strong>Finish</strong>, jawab 4 pertanyaan sejarah Geger Cilegon 1888. Salah menjawab, mundur 4 langkah!</li>
@@ -312,9 +312,7 @@
         
         <div class="mb-6 bg-slate-50 p-4 rounded-2xl border-2 border-slate-200 text-left">
             <label class="block mb-2 text-xs font-bold text-slate-600">Room Aktif di Cloud:</label>
-            <div class="grid grid-cols-2 gap-3" id="rooms-grid-container">
-                <!-- Dynamically populated room cards -->
-            </div>
+            <div class="grid grid-cols-2 gap-3" id="rooms-grid-container"></div>
         </div>
 
         <div class="flex justify-center gap-4 flex-wrap">
@@ -333,9 +331,7 @@
                 <span class="text-xs font-extrabold text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full border border-indigo-300">Kode: <span id="waiting-room-code-display" class="tracking-widest">LAB123</span></span>
             </div>
             <h4 class="font-heading text-slate-700 text-sm mb-2">👥 Daftar Pemain di Ruangan (<span id="waiting-player-count">1</span>/<span id="waiting-max-players">4</span>)</h4>
-            <div id="waiting-players-list" class="flex flex-col gap-2 mb-2">
-                <!-- Dynamically populated player cards -->
-            </div>
+            <div id="waiting-players-list" class="flex flex-col gap-2 mb-2"></div>
         </div>
 
         <div class="flex justify-center gap-4 flex-wrap">
@@ -928,6 +924,12 @@
             return false;
         }
 
+        function getLocalPlayerIndex() {
+            if (!isOnlineMode) return activeFollowPlayerIndex;
+            const idx = players.findIndex(p => p.userId === userId);
+            return idx !== -1 ? idx : 0;
+        }
+
         const handlePointerDown = (e) => {
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -943,7 +945,7 @@
             const duration = performance.now() - pointerStartTime;
 
             if (distance < 15 && duration < 300) {
-                handlePlayerStep(0);
+                handlePlayerStep(getLocalPlayerIndex());
             }
         };
 
@@ -1017,7 +1019,7 @@
                 const coord = coords[i];
                 let tileType = 'normal';
                 let val = 0;
-                // Avoid placing special items/hazards on NPC checkpoint indices (10, 20, 30, 40, 50)
+                // Exclude NPC checkpoint indices (10, 20, 30, 40, 50) from randomized items
                 if (i !== 10 && i !== 20 && i !== 30 && i !== 40 && i !== 50 && tileTypes.length > 0) {
                     let popped = tileTypes.pop();
                     tileType = popped.type;
@@ -1258,6 +1260,7 @@
             tbody.innerHTML = '';
             players.forEach((p, idx) => {
                 const isFinished = p.position >= pathData.length - 1;
+                const canControl = !isOnlineMode || p.userId === userId;
                 const tr = document.createElement('tr');
                 tr.className = `score-row ${activeFollowPlayerIndex === idx ? 'active' : ''}`;
                 tr.innerHTML = `
@@ -1265,15 +1268,15 @@
                         <div class="flex items-center gap-2">
                             <div class="w-6 h-6 rounded-full border-2 border-slate-700 flex justify-center items-center text-xs cursor-pointer" style="background:${p.color}" onclick="setFollowPlayer(${idx})" title="Klik untuk ikuti kamera">${p.emoji}</div>
                             <div>
-                                <span class="font-bold cursor-pointer hover:underline" onclick="setFollowPlayer(${idx})">${p.name}</span>
+                                <span class="font-bold cursor-pointer hover:underline" onclick="setFollowPlayer(${idx})">${p.name} ${p.userId === userId ? '(Kamu)' : ''}</span>
                                 <div class="text-[10px] text-slate-500">Pos: ${p.position}/${pathData.length-1} | Poin: ${p.score}</div>
                             </div>
                         </div>
                     </td>
                     <td class="text-center font-bold text-slate-500">${p.snippetsCollected || 0}</td>
                     <td class="text-right">
-                        <button onclick="handlePlayerStep(${idx})" ${isFinished ? 'disabled' : ''} class="bg-green-500 hover:bg-green-600 active:translate-y-0.5 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow border border-green-700 transition-all">
-                            ${isFinished ? 'Finis 🏁' : 'Melangkah ➡️'}
+                        <button onclick="handlePlayerStep(${idx})" ${isFinished || !canControl ? 'disabled' : ''} class="${canControl ? 'bg-green-500 hover:bg-green-600' : 'bg-slate-400 opacity-50'} active:translate-y-0.5 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow border border-green-700 transition-all">
+                            ${isFinished ? 'Finis 🏁' : (canControl ? 'Melangkah ➡️' : 'Pemain Lain')}
                         </button>
                     </td>
                 `;
@@ -1292,6 +1295,7 @@
             if (isModalOpen()) return;
             const p = players[playerIdx];
             if (!p || p.position >= pathData.length - 1) return;
+            if (isOnlineMode && p.userId !== userId) return; // Guard: only control own pawn in online mode
 
             activeFollowPlayerIndex = playerIdx;
             updateLeaderboard();
@@ -1313,7 +1317,7 @@
             if (isModalOpen()) return;
             if (['ArrowUp', 'w', 'W'].includes(e.key)) {
                 e.preventDefault();
-                handlePlayerStep(0);
+                handlePlayerStep(getLocalPlayerIndex());
             }
         });
 
@@ -1380,7 +1384,6 @@
         function askNextQuizQuestion() {
             const quizzes = gegerCilegonQuizzes[currentLevel] || gegerCilegonQuizzes[1];
             if (currentQuizIndex >= quizzes.length) {
-                // Quiz completed successfully for this level
                 if (currentLevel < 4) {
                     showInfoModal(`Level ${currentLevel} Selesai!`, `Luar biasa! ${activeQuizPlayer.name} berhasil menjawab semua kuis sejarah Geger Cilegon 1888 dan melanjutkan ke Level ${currentLevel + 1}!`, () => {
                         currentLevel++;
@@ -1948,6 +1951,15 @@
                 canvasContainer.addEventListener('touchstart', handlePointerDown, { passive: true });
                 canvasContainer.addEventListener('touchend', handlePointerUp, { passive: true });
             }
+
+            window.addEventListener('resize', () => {
+                if (!renderer3D || !camera3D || !canvasContainer) return;
+                const width = canvasContainer.clientWidth;
+                const height = canvasContainer.clientHeight || 450;
+                camera3D.aspect = width / height;
+                camera3D.updateProjectionMatrix();
+                renderer3D.setSize(width, height);
+            });
         };
 
         window.toggleSound = function() {
