@@ -322,6 +322,29 @@
         </div>
     </div>
 
+    <div id="screen-waiting-room" class="hide-screen w-full max-w-lg bg-white border-8 border-slate-800 rounded-[30px] shadow-[10px_10px_0_#0f172a] p-8 text-center mx-4 z-50 max-h-[95vh] overflow-y-auto">
+        <div class="text-5xl mb-2">⏳</div>
+        <h2 class="font-heading text-3xl text-indigo-600 mb-1">Ruang Tunggu Online</h2>
+        <p class="font-bold text-slate-500 mb-4" id="waiting-room-subtitle">Menunggu pemain lain bergabung...</p>
+        
+        <div class="mb-6 bg-indigo-50 p-4 rounded-2xl border-2 border-indigo-200 text-left">
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-xs font-bold text-slate-600" id="waiting-room-number-badge">Room 1</span>
+                <span class="text-xs font-extrabold text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full border border-indigo-300">Kode: <span id="waiting-room-code-display" class="tracking-widest">LAB123</span></span>
+            </div>
+            <h4 class="font-heading text-slate-700 text-sm mb-2">👥 Daftar Pemain di Ruangan (<span id="waiting-player-count">1</span>/<span id="waiting-max-players">4</span>)</h4>
+            <div id="waiting-players-list" class="flex flex-col gap-2 mb-2">
+                <!-- Dynamically populated player cards -->
+            </div>
+        </div>
+
+        <div class="flex justify-center gap-4 flex-wrap">
+            <button onclick="leaveWaitingRoom()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#64748b] !bg-slate-300 !border-slate-500 !text-slate-700 w-auto max-w-xs transition-all">Keluar Room</button>
+            <button id="btn-host-start-game" onclick="hostStartGameSession()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#15803d] !bg-green-400 !border-green-700 !text-green-900 w-auto max-w-xs transition-all hidden">Mulai Permainan! 🚀</button>
+            <div id="guest-waiting-msg" class="text-xs font-bold text-amber-600 bg-amber-50 p-2 rounded-xl border border-amber-300 w-full">Menunggu Host (<span id="host-name-display">-</span>) memulai permainan...</div>
+        </div>
+    </div>
+
     <div id="screen-game" class="game-container hide-screen">
         <div class="main-column flex flex-col gap-5">
             <div id="board-2d-wrapper" class="board-wrapper hidden">
@@ -890,6 +913,7 @@
         let activeRoomCode = null;
         let roomUnsubscribe = null;
         let isOnlineMode = false;
+        let isHostUser = false;
         let activeQuizPlayer = null;
         let currentQuizIndex = 0;
         let activePlayerForSnippet = null;
@@ -919,8 +943,7 @@
             const duration = performance.now() - pointerStartTime;
 
             if (distance < 15 && duration < 300) {
-                const myPlayerIdx = players.findIndex(p => p.isLocal || p.userId === userId || p.name === activePlayerName);
-                handlePlayerStep(myPlayerIdx !== -1 ? myPlayerIdx : 0);
+                handlePlayerStep(0);
             }
         };
 
@@ -949,15 +972,15 @@
                 ];
             } else if (level === 2) {
                 return [
-                    {r:12, c:0}, {r:12, c:1}, {r:12, c:2}, {r:12, c:3}, {r:11, c:3}, {r:10, c:3}, {r:9, c:3}, {r:9, c:2}, {r:9, c:1}, {r:8, c:1}, {r:7, c:1}, {r:6, c:1}, {r:5, c:1}, {r:4, c:1}, {r:3, c:1}, {r:2, c:1}, {r:2, c:2}, {r:2, c:3}, {r:2, c:4}, {r:2, c:5}, {r:3, c:5}, {r:4, c:5}, {r:5, c:5}, {r:6, c:5}, {r:7, c:5}, {r:8, c:5}, {r:9, c:5}, {r:10, c:5}, {r:10, c:6}, {r:10, c:7}, {r:9, c:7}, {r:8, c:7}, {r:7, c:7}, {r:6, c:7}, {r:5, c:7}, {r:4, c:7}, {r:3, c:7}, {r:2, c:7}, {r:1, c:7}, {r:0, c:7}, {r:0, c:8}, {r:0, c:9}, {r:1, c:9}, {r:2, c:9}, {r:3, c:9}, {r:4, c:9}, {r:5, c:9}, {r:6, c:9}, {r:7, c:9}, {r:8, c:9}, {r:9, c:9}, {r:10, c:9}, {r:11, c:9}, {r:12, c:9}, {r:12, c:10}, {r:12, c:11}, {r:11, c:11}, {r:10, c:11}, {r:9, c:11}, {r:8, c:11}, {r:7, c:11}, {r:6, c:11}, {r:5, c:11}, {r:4, c:11}, {r:3, c:11}, {r:2, c:11}, {r:1, c:11}, {r:0, c:11}, {r:0, c:12}, {r:1, c:12}, {r:2, c:12}, {r:3, c:12}, {r:4, c:12}, {r:5, c:12}, {r:6, c:12}, {r:7, c:12}, {r:8, c:12}, {r:9, c:12}, {r:10, c:12}, {r:11, c:12}, {r:12, c:12}
+                    {r:11, c:0}, {r:11, c:1}, {r:10, c:1}, {r:9, c:1}, {r:8, c:1}, {r:7, c:1}, {r:6, c:1}, {r:5, c:1}, {r:5, c:2}, {r:5, c:3}, {r:6, c:3}, {r:7, c:3}, {r:8, c:3}, {r:9, c:3}, {r:10, c:3}, {r:11, c:3}, {r:11, c:4}, {r:11, c:5}, {r:10, c:5}, {r:9, c:5}, {r:8, c:5}, {r:7, c:5}, {r:6, c:5}, {r:5, c:5}, {r:4, c:5}, {r:3, c:5}, {r:2, c:5}, {r:1, c:5}, {r:0, c:5}, {r:0, c:6}, {r:0, c:7}, {r:1, c:7}, {r:2, c:7}, {r:3, c:7}, {r:4, c:7}, {r:5, c:7}, {r:6, c:7}, {r:7, c:7}, {r:8, c:7}, {r:9, c:7}, {r:10, c:7}, {r:11, c:7}, {r:11, c:8}, {r:11, c:9}, {r:10, c:9}, {r:9, c:9}, {r:8, c:9}, {r:7, c:9}, {r:6, c:9}, {r:5, c:9}, {r:4, c:9}, {r:3, c:9}, {r:2, c:9}, {r:1, c:9}, {r:0, c:9}, {r:0, c:10}, {r:0, c:11}, {r:1, c:11}, {r:2, c:11}, {r:3, c:11}, {r:4, c:11}, {r:5, c:11}, {r:6, c:11}, {r:7, c:11}, {r:8, c:11}, {r:9, c:11}, {r:10, c:11}, {r:11, c:11}
                 ];
             } else if (level === 3) {
                 return [
-                    {r:13, c:0}, {r:13, c:1}, {r:13, c:2}, {r:13, c:3}, {r:13, c:4}, {r:12, c:4}, {r:11, c:4}, {r:10, c:4}, {r:9, c:4}, {r:9, c:3}, {r:9, c:2}, {r:9, c:1}, {r:8, c:1}, {r:7, c:1}, {r:6, c:1}, {r:5, c:1}, {r:4, c:1}, {r:3, c:1}, {r:2, c:1}, {r:1, c:1}, {r:1, c:2}, {r:1, c:3}, {r:1, c:4}, {r:1, c:5}, {r:2, c:5}, {r:3, c:5}, {r:4, c:5}, {r:5, c:5}, {r:6, c:5}, {r:7, c:5}, {r:8, c:5}, {r:9, c:5}, {r:10, c:5}, {r:11, c:5}, {r:11, c:6}, {r:11, c:7}, {r:10, c:7}, {r:9, c:7}, {r:8, c:7}, {r:7, c:7}, {r:6, c:7}, {r:5, c:7}, {r:4, c:7}, {r:3, c:7}, {r:2, c:7}, {r:1, c:7}, {r:0, c:7}, {r:0, c:8}, {r:0, c:9}, {r:1, c:9}, {r:2, c:9}, {r:3, c:9}, {r:4, c:9}, {r:5, c:9}, {r:6, c:9}, {r:7, c:9}, {r:8, c:9}, {r:9, c:9}, {r:10, c:9}, {r:11, c:9}, {r:12, c:9}, {r:13, c:9}, {r:13, c:10}, {r:13, c:11}, {r:12, c:11}, {r:11, c:11}, {r:10, c:11}, {r:9, c:11}, {r:8, c:11}, {r:7, c:11}, {r:6, c:11}, {r:5, c:11}, {r:4, c:11}, {r:3, c:11}, {r:2, c:11}, {r:1, c:11}, {r:0, c:11}, {r:0, c:12}, {r:1, c:12}, {r:2, c:12}, {r:3, c:12}, {r:4, c:12}, {r:5, c:12}, {r:6, c:12}, {r:7, c:12}, {r:8, c:12}, {r:9, c:12}, {r:10, c:12}, {r:11, c:12}, {r:12, c:12}, {r:13, c:12}
+                    {r:0, c:0}, {r:1, c:0}, {r:2, c:0}, {r:3, c:0}, {r:4, c:0}, {r:5, c:0}, {r:6, c:0}, {r:7, c:0}, {r:8, c:0}, {r:9, c:0}, {r:10, c:0}, {r:11, c:0}, {r:11, c:1}, {r:11, c:2}, {r:10, c:2}, {r:9, c:2}, {r:8, c:2}, {r:7, c:2}, {r:6, c:2}, {r:5, c:2}, {r:4, c:2}, {r:3, c:2}, {r:2, c:2}, {r:1, c:2}, {r:0, c:2}, {r:0, c:3}, {r:0, c:4}, {r:1, c:4}, {r:2, c:4}, {r:3, c:4}, {r:4, c:4}, {r:5, c:4}, {r:6, c:4}, {r:7, c:4}, {r:8, c:4}, {r:9, c:4}, {r:10, c:4}, {r:11, c:4}, {r:11, c:5}, {r:11, c:6}, {r:10, c:6}, {r:9, c:6}, {r:8, c:6}, {r:7, c:6}, {r:6, c:6}, {r:5, c:6}, {r:4, c:6}, {r:3, c:6}, {r:2, c:6}, {r:1, c:6}, {r:0, c:6}, {r:0, c:7}, {r:0, c:8}, {r:1, c:8}, {r:2, c:8}, {r:3, c:8}, {r:4, c:8}, {r:5, c:8}, {r:6, c:8}, {r:7, c:8}, {r:8, c:8}, {r:9, c:8}, {r:10, c:8}, {r:11, c:8}, {r:11, c:9}, {r:11, c:10}, {r:10, c:10}, {r:9, c:10}, {r:8, c:10}, {r:7, c:10}, {r:6, c:10}, {r:5, c:10}, {r:4, c:10}, {r:3, c:10}, {r:2, c:10}, {r:1, c:10}, {r:0, c:10}, {r:0, c:11}, {r:1, c:11}, {r:2, c:11}, {r:3, c:11}, {r:4, c:11}, {r:5, c:11}, {r:6, c:11}, {r:7, c:11}, {r:8, c:11}, {r:9, c:11}, {r:10, c:11}, {r:11, c:11}
                 ];
             } else {
                 return [
-                    {r:14, c:0}, {r:14, c:1}, {r:14, c:2}, {r:14, c:3}, {r:14, c:4}, {r:14, c:5}, {r:13, c:5}, {r:12, c:5}, {r:11, c:5}, {r:10, c:5}, {r:9, c:5}, {r:9, c:4}, {r:9, c:3}, {r:9, c:2}, {r:9, c:1}, {r:8, c:1}, {r:7, c:1}, {r:6, c:1}, {r:5, c:1}, {r:4, c:1}, {r:3, c:1}, {r:2, c:1}, {r:1, c:1}, {r:1, c:2}, {r:1, c:3}, {r:1, c:4}, {r:1, c:5}, {r:1, c:6}, {r:2, c:6}, {r:3, c:6}, {r:4, c:6}, {r:5, c:6}, {r:6, c:6}, {r:7, c:6}, {r:8, c:6}, {r:9, c:6}, {r:10, c:6}, {r:11, c:6}, {r:12, c:6}, {r:12, c:7}, {r:12, c:8}, {r:11, c:8}, {r:10, c:8}, {r:9, c:8}, {r:8, c:8}, {r:7, c:8}, {r:6, c:8}, {r:5, c:8}, {r:4, c:8}, {r:3, c:8}, {r:2, c:8}, {r:1, c:8}, {r:0, c:8}, {r:0, c:9}, {r:0, c:10}, {r:1, c:10}, {r:2, c:10}, {r:3, c:10}, {r:4, c:10}, {r:5, c:10}, {r:6, c:10}, {r:7, c:10}, {r:8, c:10}, {r:9, c:10}, {r:10, c:10}, {r:11, c:10}, {r:12, c:10}, {r:13, c:10}, {r:14, c:10}, {r:14, c:11}, {r:14, c:12}, {r:13, c:12}, {r:12, c:12}, {r:11, c:12}, {r:10, c:12}, {r:9, c:12}, {r:8, c:12}, {r:7, c:12}, {r:6, c:12}, {r:5, c:12}, {r:4, c:12}, {r:3, c:12}, {r:2, c:12}, {r:1, c:12}, {r:0, c:12}, {r:0, c:13}, {r:1, c:13}, {r:2, c:13}, {r:3, c:13}, {r:4, c:13}, {r:5, c:13}, {r:6, c:13}, {r:7, c:13}, {r:8, c:13}, {r:9, c:13}, {r:10, c:13}, {r:11, c:13}, {r:12, c:13}, {r:13, c:13}, {r:14, c:13}
+                    {r:5, c:0}, {r:5, c:1}, {r:5, c:2}, {r:4, c:2}, {r:3, c:2}, {r:2, c:2}, {r:1, c:2}, {r:0, c:2}, {r:0, c:3}, {r:0, c:4}, {r:1, c:4}, {r:2, c:4}, {r:3, c:4}, {r:4, c:4}, {r:5, c:4}, {r:6, c:4}, {r:7, c:4}, {r:8, c:4}, {r:9, c:4}, {r:10, c:4}, {r:11, c:4}, {r:11, c:5}, {r:11, c:6}, {r:10, c:6}, {r:9, c:6}, {r:8, c:6}, {r:7, c:6}, {r:6, c:6}, {r:5, c:6}, {r:4, c:6}, {r:3, c:6}, {r:2, c:6}, {r:1, c:6}, {r:0, c:6}, {r:0, c:7}, {r:0, c:8}, {r:1, c:8}, {r:2, c:8}, {r:3, c:8}, {r:4, c:8}, {r:5, c:8}, {r:6, c:8}, {r:7, c:8}, {r:8, c:8}, {r:9, c:8}, {r:10, c:8}, {r:11, c:8}, {r:11, c:9}, {r:11, c:10}, {r:10, c:10}, {r:9, c:10}, {r:8, c:10}, {r:7, c:10}, {r:6, c:10}, {r:5, c:10}, {r:4, c:10}, {r:3, c:10}, {r:2, c:10}, {r:1, c:10}, {r:0, c:10}, {r:0, c:11}, {r:1, c:11}, {r:2, c:11}, {r:3, c:11}, {r:4, c:11}, {r:5, c:11}, {r:6, c:11}, {r:7, c:11}, {r:8, c:11}, {r:9, c:11}, {r:10, c:11}, {r:11, c:11}, {r:11, c:0}, {r:10, c:0}, {r:9, c:0}, {r:8, c:0}, {r:7, c:0}, {r:6, c:0}
                 ];
             }
         }
@@ -965,34 +988,24 @@
         function randomizePath() {
             const coords = getLevelCoords(currentLevel);
             pathData = [];
-            const reservedIndices = new Set([0, coords.length - 1, 10, 20, 30, 40, 50]);
-            let middleIndices = [];
-            for(let i = 1; i < coords.length - 1; i++) {
-                middleIndices.push(i);
-            }
+            pathData.push({ r: coords[0].r, c: coords[0].c, type: 'start' });
             
-            let availableIndices = middleIndices.filter(i => !reservedIndices.has(i));
-            let tileMap = {};
-            middleIndices.forEach(i => {
-                tileMap[i] = { type: 'normal', val: 0 };
-            });
-            
-            let middleCount = availableIndices.length;
-            let numTreasures = Math.floor(middleCount * (0.18 + currentLevel * 0.01));
-            let numBonus = Math.floor(middleCount * 0.08);
-            let numHotspring = Math.floor(middleCount * (0.05 + currentLevel * 0.02));
-            let numLightning = Math.floor(middleCount * (0.05 + currentLevel * 0.02));
-            let numRadiation = Math.floor(middleCount * (0.04 + currentLevel * 0.02));
-            
+            let middleCount = coords.length - 2;
             let tileTypes = [];
-            for(let i=0; i<numTreasures; i++) tileTypes.push({type: 'treasure', val: 0});
+            let numTreasures = Math.floor(middleCount * 0.20);
+            let numBonus = Math.floor(middleCount * 0.08);
+            let numHotspring = Math.floor(middleCount * 0.07);
+            let numLightning = Math.floor(middleCount * 0.07);
+            let numRadiation = Math.floor(middleCount * 0.06);
+            
+            for(let i=0; i<numTreasures; i++) tileTypes.push({type: 'treasure'});
             for(let i=0; i<numBonus; i++) tileTypes.push({type: 'bonus', val: 15});
             for(let i=0; i<numHotspring; i++) tileTypes.push({type: 'hotspring', val: -5});
             for(let i=0; i<numLightning; i++) tileTypes.push({type: 'lightning', val: -5});
             for(let i=0; i<numRadiation; i++) tileTypes.push({type: 'radiation', val: -10});
             
-            while(tileTypes.length < availableIndices.length) { 
-                tileTypes.push({type: 'normal', val: 0});
+            while(tileTypes.length < middleCount) { 
+                tileTypes.push({type: 'normal'});
             }
             
             for (let i = tileTypes.length - 1; i > 0; i--) {
@@ -1000,25 +1013,23 @@
                 [tileTypes[i], tileTypes[j]] = [tileTypes[j], tileTypes[i]];
             }
             
-            availableIndices.forEach(idx => {
-                tileMap[idx] = tileTypes.pop();
-            });
-            
-            pathData.push({ r: coords[0].r, c: coords[0].c, type: 'start' });
-            for(let i = 1; i < coords.length - 1; i++) {
+            for(let i = 1; i <= middleCount; i++) {
                 const coord = coords[i];
-                const t = tileMap[i];
-                pathData.push({ r: coord.r, c: coord.c, type: t.type, val: t.val });
+                let tileType = 'normal';
+                let val = 0;
+                // Avoid placing special items/hazards on NPC checkpoint indices (10, 20, 30, 40, 50)
+                if (i !== 10 && i !== 20 && i !== 30 && i !== 40 && i !== 50 && tileTypes.length > 0) {
+                    let popped = tileTypes.pop();
+                    tileType = popped.type;
+                    val = popped.val || 0;
+                }
+                pathData.push({ r: coord.r, c: coord.c, type: tileType, val: val });
             }
             pathData.push({ r: coords[coords.length - 1].r, c: coords[coords.length - 1].c, type: 'finish' });
         }
 
         function gridTo3DSpace(r, c) {
-            let gridDim = 12;
-            if (currentLevel === 2) gridDim = 13;
-            else if (currentLevel === 3) gridDim = 14;
-            else if (currentLevel === 4) gridDim = 15;
-            const halfGrid = (gridDim - 1) / 2;
+            const halfGrid = 5.5; 
             return { x: (c - halfGrid) * gridSpacing3D, z: (r - halfGrid) * gridSpacing3D };
         }
 
@@ -1109,12 +1120,18 @@
                     nuki.castShadow = true;
 
                     toriiGroup.add(pillarLeft, pillarRight, kasagi, nuki);
-                    const figureSprite = createEmojiSprite('👳🏻‍♂️');
-                    figureSprite.scale.set(1.5, 1.5, 1);
-                    figureSprite.position.set(0, 1.5, 0);
-                    toriiGroup.add(figureSprite);
                     toriiGroup.position.set(pos.x, 0, pos.z);
+
+                    if (idx + 1 < pathData.length) {
+                        const nextPos = gridTo3DSpace(pathData[idx+1].r, pathData[idx+1].c);
+                        toriiGroup.rotation.y = Math.atan2(nextPos.x - pos.x, nextPos.z - pos.z);
+                    }
+
                     scene3D.add(toriiGroup);
+
+                    const npcSprite = createEmojiSprite('👳🏻‍♂️');
+                    npcSprite.position.set(pos.x, 1.8, pos.z);
+                    scene3D.add(npcSprite);
                 }
 
                 let icon = '';
@@ -1165,12 +1182,10 @@
                 const jump = active3DJumps[idx];
                 if (!pawn) return;
 
-                const currIdx = player.position || 0;
+                const currIdx = player.position;
                 const nextIdx = Math.min(currIdx + 1, pathData.length - 1);
                 const currCoord = pathData[currIdx];
                 const nextCoord = pathData[nextIdx];
-                if (!currCoord || !nextCoord) return;
-                
                 const cPos = gridTo3DSpace(currCoord.r, currCoord.c);
                 const nPos = gridTo3DSpace(nextCoord.r, nextCoord.c);
 
@@ -1193,8 +1208,7 @@
                     const pz = jump.startZ + (jump.targetZ - jump.startZ) * t;
                     pawn.position.set(px, py, pz);
                 } else {
-                    const targetCoord = pathData[player.position || 0];
-                    if (!targetCoord) return;
+                    const targetCoord = pathData[player.position];
                     const targetPos = gridTo3DSpace(targetCoord.r, targetCoord.c);
                     pawn.position.x += ((targetPos.x + (idx * 0.3)) - pawn.position.x) * 0.2;
                     pawn.position.z += ((targetPos.z + (idx * 0.3)) - pawn.position.z) * 0.2;
@@ -1205,36 +1219,34 @@
             const followPawn = playerPawns3D[activeFollowPlayerIndex] || playerPawns3D[0];
             const followPlayer = players[activeFollowPlayerIndex] || players[0];
             if (followPawn && followPlayer) {
-                const currIdx = followPlayer.position || 0;
+                const currIdx = followPlayer.position;
                 const nextIdx = Math.min(currIdx + 1, pathData.length - 1);
                 const currCoord = pathData[currIdx];
                 const nextCoord = pathData[nextIdx];
-                if (currCoord && nextCoord) {
-                    const cPos = gridTo3DSpace(currCoord.r, currCoord.c);
-                    const nPos = gridTo3DSpace(nextCoord.r, nextCoord.c);
+                const cPos = gridTo3DSpace(currCoord.r, currCoord.c);
+                const nPos = gridTo3DSpace(nextCoord.r, nextCoord.c);
 
-                    const dir = new THREE.Vector3(nPos.x - cPos.x, 0, nPos.z - cPos.z);
-                    if (dir.lengthSq() < 0.001) {
-                        dir.set(0, 0, -1);
-                    } else {
-                        dir.normalize();
-                    }
-
-                    const targetCamX = followPawn.position.x - dir.x * 6.5;
-                    const targetCamZ = followPawn.position.z - dir.z * 6.5;
-                    const targetCamY = followPawn.position.y + 3.8;
-
-                    currentCamPos.x += (targetCamX - currentCamPos.x) * 0.08;
-                    currentCamPos.y += (targetCamY - currentCamPos.y) * 0.08;
-                    currentCamPos.z += (targetCamZ - currentCamPos.z) * 0.08;
-                    camera3D.position.copy(currentCamPos);
-
-                    const lookTargetX = followPawn.position.x + dir.x * 1.5;
-                    const lookTargetY = followPawn.position.y + 1.0;
-                    const lookTargetZ = followPawn.position.z + dir.z * 1.5;
-                    currentCamTarget.set(lookTargetX, lookTargetY, lookTargetZ);
-                    camera3D.lookAt(currentCamTarget);
+                const dir = new THREE.Vector3(nPos.x - cPos.x, 0, nPos.z - cPos.z);
+                if (dir.lengthSq() < 0.001) {
+                    dir.set(0, 0, -1);
+                } else {
+                    dir.normalize();
                 }
+
+                const targetCamX = followPawn.position.x - dir.x * 6.5;
+                const targetCamZ = followPawn.position.z - dir.z * 6.5;
+                const targetCamY = followPawn.position.y + 3.8;
+
+                currentCamPos.x += (targetCamX - currentCamPos.x) * 0.08;
+                currentCamPos.y += (targetCamY - currentCamPos.y) * 0.08;
+                currentCamPos.z += (targetCamZ - currentCamPos.z) * 0.08;
+                camera3D.position.copy(currentCamPos);
+
+                const lookTargetX = followPawn.position.x + dir.x * 1.5;
+                const lookTargetY = followPawn.position.y + 1.0;
+                const lookTargetZ = followPawn.position.z + dir.z * 1.5;
+                currentCamTarget.set(lookTargetX, lookTargetY, lookTargetZ);
+                camera3D.lookAt(currentCamTarget);
             }
 
             renderer3D.render(scene3D, camera3D);
@@ -1245,16 +1257,16 @@
             if(!tbody) return;
             tbody.innerHTML = '';
             players.forEach((p, idx) => {
-                const isFinished = (p.position || 0) >= pathData.length - 1;
+                const isFinished = p.position >= pathData.length - 1;
                 const tr = document.createElement('tr');
                 tr.className = `score-row ${activeFollowPlayerIndex === idx ? 'active' : ''}`;
                 tr.innerHTML = `
                     <td>
                         <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full border-2 border-slate-700 flex justify-center items-center text-xs cursor-pointer" style="background:${p.color || '#ebb434'}" onclick="setFollowPlayer(${idx})" title="Klik untuk ikuti kamera">${p.emoji || '🧑'}</div>
+                            <div class="w-6 h-6 rounded-full border-2 border-slate-700 flex justify-center items-center text-xs cursor-pointer" style="background:${p.color}" onclick="setFollowPlayer(${idx})" title="Klik untuk ikuti kamera">${p.emoji}</div>
                             <div>
                                 <span class="font-bold cursor-pointer hover:underline" onclick="setFollowPlayer(${idx})">${p.name}</span>
-                                <div class="text-[10px] text-slate-500">Lvl ${currentLevel} | Pos: ${p.position || 0}/${pathData.length-1} | Poin: ${p.score || 0}</div>
+                                <div class="text-[10px] text-slate-500">Pos: ${p.position}/${pathData.length-1} | Poin: ${p.score}</div>
                             </div>
                         </div>
                     </td>
@@ -1269,7 +1281,7 @@
             });
         }
 
-        window.setFollowPlayer = function(playerIdx) {
+        function setFollowPlayer(playerIdx) {
             activeFollowPlayerIndex = playerIdx;
             updateLeaderboard();
         }
@@ -1279,132 +1291,67 @@
         async function handlePlayerStep(playerIdx) {
             if (isModalOpen()) return;
             const p = players[playerIdx];
-            if (!p || (p.position || 0) >= pathData.length - 1) return;
+            if (!p || p.position >= pathData.length - 1) return;
 
             activeFollowPlayerIndex = playerIdx;
             updateLeaderboard();
 
-            const prevPos = p.position || 0;
-            p.position = prevPos + 1;
+            const prevPos = p.position;
+            p.position++;
             trigger3DStepJump(playerIdx, prevPos, p.position);
             AudioHelper.playStep();
-            await sleep(320);
-            await handleTileAction(p, playerIdx);
-
-            if (isOnlineMode && db && activeRoomNum) {
+            
+            if (isOnlineMode) {
                 syncRoomStateToFirestore();
             }
+
+            await sleep(320);
+            await handleTileAction(p);
         }
 
         window.addEventListener('keydown', (e) => {
             if (isModalOpen()) return;
             if (['ArrowUp', 'w', 'W'].includes(e.key)) {
                 e.preventDefault();
-                const myIdx = players.findIndex(p => p.userId === userId || p.name === activePlayerName);
-                handlePlayerStep(myIdx !== -1 ? myIdx : 0);
+                handlePlayerStep(0);
             }
         });
 
-        async function handleTileAction(player, playerIdx) {
+        async function handleTileAction(player) {
             const tile = pathData[player.position];
             if (!tile) return;
             
-            if (npcDialogues[player.position] && (!player.visitedNPCs || !player.visitedNPCs[player.position])) {
-                if (!player.visitedNPCs) player.visitedNPCs = {};
-                player.visitedNPCs[player.position] = true;
-                const npcData = npcDialogues[player.position];
-                showInfoModal(`👳🏻‍♂️ Tokoh Sejarah: ${npcData.npc}`, `<div class="italic text-indigo-700 font-semibold mb-2 leading-relaxed">"${npcData.text}"</div>`);
-                return;
+            if (npcDialogues[player.position]) {
+                const dialogue = npcDialogues[player.position];
+                showInfoModal(`Percakapan dengan ${dialogue.npc}`, dialogue.text);
             }
-            
+
             if (tile.type === 'treasure') {
                 showSnippetModal(player);
+                return;
             } 
             else if (tile.type === 'bonus') {
-                player.score = (player.score || 0) + tile.val;
+                player.score += tile.val;
                 showInfoModal('⭐ BONUS!', `Selamat! ${player.name} mendapat ${tile.val} poin!`);
             }
             else if (tile.type === 'hotspring') {
-                player.score = Math.max(0, (player.score || 0) + tile.val);
+                player.score = Math.max(0, player.score + tile.val);
                 showInfoModal('♨️ AIR PANAS!', `Aduh! ${player.name} terkena ubin Air Panas dan kehilangan ${Math.abs(tile.val)} poin!`);
             }
             else if (tile.type === 'lightning') {
-                player.score = Math.max(0, (player.score || 0) + tile.val);
+                player.score = Math.max(0, player.score + tile.val);
                 showInfoModal('⚡ PETIR!', `Waduh! ${player.name} tersambar Petir dan kehilangan ${Math.abs(tile.val)} poin!`);
             }
             else if (tile.type === 'radiation') {
-                player.score = Math.max(0, (player.score || 0) + tile.val);
+                player.score = Math.max(0, player.score + tile.val);
                 showInfoModal('☣️ RADIASI!', `Bahaya! ${player.name} terpapar area Radiasi dan kehilangan ${Math.abs(tile.val)} poin!`);
             }
             else if (tile.type === 'finish') {
                 startFinishQuiz(player);
+                return;
             }
             updateLeaderboard();
-        }
-
-        function startFinishQuiz(player) {
-            activeQuizPlayer = player;
-            currentQuizIndex = 0;
-            loadQuizQuestion();
-            document.getElementById('quiz-modal').classList.add('show');
-        }
-
-        function loadQuizQuestion() {
-            if (!activeQuizPlayer) return;
-            const quizList = gegerCilegonQuizzes[currentLevel] || gegerCilegonQuizzes[1];
-            const qData = quizList[currentQuizIndex];
-            document.getElementById('quiz-question-text').innerText = `${currentQuizIndex + 1}. ${qData.q}`;
-            document.getElementById('quiz-progress-indicator').innerText = `Level ${currentLevel} - Pertanyaan ${currentQuizIndex + 1} dari 4 (Pemain: ${activeQuizPlayer.name})`;
-
-            const container = document.getElementById('quiz-options-container');
-            container.innerHTML = '';
-            qData.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = "w-full text-left p-3 rounded-xl border-2 border-indigo-300 bg-white hover:bg-indigo-100 font-bold text-slate-700 text-sm md:text-base transition-all active:translate-y-0.5 shadow-sm";
-                btn.innerHTML = `<span class="inline-block w-6 font-extrabold text-indigo-600">${String.fromCharCode(65 + idx)}.</span> ${opt}`;
-                btn.onclick = () => handleQuizAnswer(idx);
-                container.appendChild(btn);
-            });
-        }
-
-        async function handleQuizAnswer(selectedIdx) {
-            const quizList = gegerCilegonQuizzes[currentLevel] || gegerCilegonQuizzes[1];
-            const qData = quizList[currentQuizIndex];
-            const isCorrect = (selectedIdx === qData.correct);
-
-            if (isCorrect) {
-                AudioHelper.playSelect();
-                currentQuizIndex++;
-                if (currentQuizIndex >= quizList.length) {
-                    document.getElementById('quiz-modal').classList.remove('show');
-                    if (currentLevel < 4) {
-                        showLevelCompleteModal(`🎉 LEVEL ${currentLevel} SELESAI!`, `Hebat! ${activeQuizPlayer.name} berhasil menaklukkan kuis Level ${currentLevel}!<br><b>Bersiap memasuki Level ${currentLevel + 1}!</b>`, () => {
-                            currentLevel++;
-                            const badge = document.getElementById('level-display-badge');
-                            if(badge) badge.innerText = `Level ${currentLevel}`;
-                            players.forEach(p => { p.position = 0; });
-                            randomizePath();
-                            if (animationFrameId3D) { cancelAnimationFrame(animationFrameId3D); animationFrameId3D = null; }
-                            init3D();
-                            updateLeaderboard();
-                            if (isOnlineMode && db && activeRoomNum) syncRoomStateToFirestore();
-                        });
-                    } else {
-                        showWinnerModal();
-                    }
-                } else {
-                    loadQuizQuestion();
-                }
-            } else {
-                AudioHelper.playSelect();
-                document.getElementById('quiz-modal').classList.remove('show');
-                const prevPos = activeQuizPlayer.position || 0;
-                activeQuizPlayer.position = Math.max(0, prevPos - 4);
-                trigger3DStepJump(activeQuizPlayer.id || 0, prevPos, activeQuizPlayer.position);
-                updateLeaderboard();
-                showInfoModal('❌ JAWABAN SALAH!', `Sayang sekali, ${activeQuizPlayer.name} menjawab salah!<br><b>Mundur 4 langkah ke posisi ${activeQuizPlayer.position}!</b>`);
-                if (isOnlineMode && db && activeRoomNum) syncRoomStateToFirestore();
-            }
+            if (isOnlineMode) syncRoomStateToFirestore();
         }
 
         function showSnippetModal(player) {
@@ -1417,11 +1364,73 @@
 
         async function claimSnippetPoints() {
             AudioHelper.playSelect();
-            activePlayerForSnippet.score = (activePlayerForSnippet.score || 0) + 10;
+            activePlayerForSnippet.score += 10;
             activePlayerForSnippet.snippetsCollected = (activePlayerForSnippet.snippetsCollected || 0) + 1;
             document.getElementById('snippet-modal').classList.remove('show');
             updateLeaderboard();
-            if (isOnlineMode && db && activeRoomNum) syncRoomStateToFirestore();
+            if (isOnlineMode) syncRoomStateToFirestore();
+        }
+
+        function startFinishQuiz(player) {
+            activeQuizPlayer = player;
+            currentQuizIndex = 0;
+            askNextQuizQuestion();
+        }
+
+        function askNextQuizQuestion() {
+            const quizzes = gegerCilegonQuizzes[currentLevel] || gegerCilegonQuizzes[1];
+            if (currentQuizIndex >= quizzes.length) {
+                // Quiz completed successfully for this level
+                if (currentLevel < 4) {
+                    showInfoModal(`Level ${currentLevel} Selesai!`, `Luar biasa! ${activeQuizPlayer.name} berhasil menjawab semua kuis sejarah Geger Cilegon 1888 dan melanjutkan ke Level ${currentLevel + 1}!`, () => {
+                        currentLevel++;
+                        const badge = document.getElementById('level-display-badge');
+                        if(badge) badge.innerText = `Level ${currentLevel}`;
+                        randomizePath();
+                        init3D();
+                        updateLeaderboard();
+                        if (isOnlineMode) syncRoomStateToFirestore();
+                    });
+                } else {
+                    showWinnerModal();
+                }
+                return;
+            }
+
+            const qData = quizzes[currentQuizIndex];
+            document.getElementById('quiz-progress-indicator').innerText = `Pertanyaan ${currentQuizIndex + 1} dari 4 (Level ${currentLevel})`;
+            document.getElementById('quiz-question-text').innerText = qData.q;
+            
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+            
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "btn-action !text-sm !py-3 !bg-white !text-slate-700 !border-slate-300 !shadow-[0_4px_0_#cbd5e1] hover:!bg-indigo-50 text-left px-4 rounded-xl font-bold w-full transition-all";
+                btn.innerText = `${String.fromCharCode(65 + idx)}. ${opt}`;
+                btn.onclick = () => verifyQuizAnswer(idx, qData.correct);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('quiz-modal').classList.add('show');
+        }
+
+        function verifyQuizAnswer(selectedIdx, correctIdx) {
+            AudioHelper.playSelect();
+            document.getElementById('quiz-modal').classList.remove('show');
+
+            if (selectedIdx === correctIdx) {
+                currentQuizIndex++;
+                showInfoModal("Benar! 🎉", "Jawaban kamu tepat sekali!", () => {
+                    askNextQuizQuestion();
+                });
+            } else {
+                activeQuizPlayer.position = Math.max(0, activeQuizPlayer.position - 4);
+                showInfoModal("Kurang Tepat! ❌", "Sayang sekali jawabanmu salah. Kamu harus mundur 4 langkah!", () => {
+                    updateLeaderboard();
+                    if (isOnlineMode) syncRoomStateToFirestore();
+                });
+            }
         }
 
         function showInfoModal(title, text, onClose) {
@@ -1433,68 +1442,52 @@
 
         document.getElementById('btn-info-close').addEventListener('click', () => {
             document.getElementById('info-modal').classList.remove('show');
-            if(onInfoCloseCb) onInfoCloseCb();
+            if(onInfoCloseCb) {
+                const cb = onInfoCloseCb;
+                onInfoCloseCb = null;
+                cb();
+            }
         });
 
-        function showLevelCompleteModal(title, text, onNext) {
-            document.getElementById('info-title').innerText = title;
-            document.getElementById('info-text').innerHTML = text;
-            
-            const btnClose = document.getElementById('btn-info-close');
-            btnClose.parentElement.querySelectorAll('.custom-level-back-btn').forEach(el => el.remove());
-
-            const backBtn = document.createElement('button');
-            backBtn.className = "btn-action mt-4 !bg-slate-300 !border-slate-500 !text-slate-700 !shadow-[0_6px_0_#64748b] mr-2 custom-level-back-btn";
-            backBtn.innerText = "Kembali";
-            backBtn.onclick = () => {
-                document.getElementById('info-modal').classList.remove('show');
-                showMenu();
-            };
-            btnClose.parentNode.insertBefore(backBtn, btnClose);
-
-            btnClose.innerText = "Lanjut";
-            onInfoCloseCb = onNext;
-            document.getElementById('info-modal').classList.add('show');
-        }
-
         function showWinnerModal() {
-            const standings = [...players].sort((a,b) => (b.score || 0) - (a.score || 0));
+            const standings = [...players].sort((a,b) => b.score - a.score);
             const container = document.getElementById('final-standings');
-            container.innerHTML = '';
-            standings.forEach((p) => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200">
-                        <span class="font-bold text-lg">🏆 ${p.name}</span>
-                        <span class="font-heading text-xl text-slate-700">${p.score || 0} Poin (Tamat)</span>
-                    </div>
-                `;
-            });
-            document.getElementById('winner-modal').classList.add('show');
+            if(container) {
+                container.innerHTML = '';
+                standings.forEach((p) => {
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200">
+                            <span class="font-bold text-lg">🏆 ${p.name}</span>
+                            <span class="font-heading text-xl text-slate-700">${p.score} Poin</span>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('winner-modal')?.classList.add('show');
         }
 
-        function restartFullGame() {
-            AudioHelper.playSelect();
-            document.getElementById('winner-modal').classList.remove('show');
+        window.restartFullGame = function() {
+            document.getElementById('winner-modal')?.classList.remove('show');
             currentLevel = 1;
             const badge = document.getElementById('level-display-badge');
             if(badge) badge.innerText = `Level ${currentLevel}`;
             players.forEach(p => { p.position = 0; p.score = 0; p.snippetsCollected = 0; });
             randomizePath();
-            if (animationFrameId3D) { cancelAnimationFrame(animationFrameId3D); animationFrameId3D = null; }
             init3D();
             updateLeaderboard();
-            if (isOnlineMode && db && activeRoomNum) syncRoomStateToFirestore();
         }
 
         window.showMenu = function() {
             if (roomUnsubscribe) { roomUnsubscribe(); roomUnsubscribe = null; }
             isOnlineMode = false;
+            isHostUser = false;
             activeRoomNum = null;
             document.getElementById('screen-menu')?.classList.remove('hide-screen');
             document.getElementById('screen-setup')?.classList.add('hide-screen');
             document.getElementById('screen-name-input')?.classList.add('hide-screen');
             document.getElementById('screen-mp-setup')?.classList.add('hide-screen');
             document.getElementById('screen-select-room')?.classList.add('hide-screen');
+            document.getElementById('screen-waiting-room')?.classList.add('hide-screen');
             document.getElementById('screen-game')?.classList.add('hide-screen');
             document.getElementById('btn-back')?.classList.add('hide-screen');
             document.getElementById('hud-lives')?.classList.add('hide-screen');
@@ -1506,24 +1499,26 @@
         window.selectMode = function(numPlayers) {
             AudioHelper.playSelect(); 
             selectedMode = numPlayers;
-            isOnlineMode = false;
-            document.getElementById('screen-menu').classList.add('hide-screen');
+            document.getElementById('screen-menu')?.classList.add('hide-screen');
+
             const setupContainer = document.getElementById('player-inputs');
-            setupContainer.innerHTML = `
-                <div class="text-left bg-slate-50 p-3 rounded-xl border-2 border-slate-200">
-                    <label class="block font-bold text-slate-600 text-sm mb-2">Nama Pemain</label>
-                    <input type="text" id="pname-0" class="w-full p-3 border-4 border-slate-300 rounded-xl font-bold text-slate-700 outline-none" value="Alfan" maxlength="15">
-                </div>
-            `;
-            document.getElementById('screen-setup').classList.remove('hide-screen');
-            document.getElementById('btn-back').classList.remove('hide-screen');
+            if(setupContainer) {
+                setupContainer.innerHTML = `
+                    <div class="text-left bg-slate-50 p-3 rounded-xl border-2 border-slate-200">
+                        <label class="block font-bold text-slate-600 text-sm mb-2">Nama Pemain</label>
+                        <input type="text" id="pname-0" class="w-full p-3 border-4 border-slate-300 rounded-xl font-bold text-slate-700 outline-none" value="Alfan" maxlength="15">
+                    </div>
+                `;
+            }
+            document.getElementById('screen-setup')?.classList.remove('hide-screen');
+            document.getElementById('btn-back')?.classList.remove('hide-screen');
         }
 
         window.selectMultiplayer = function() {
             AudioHelper.playSelect();
-            document.getElementById('screen-menu').classList.add('hide-screen');
-            document.getElementById('screen-name-input').classList.remove('hide-screen');
-            document.getElementById('btn-back').classList.remove('hide-screen');
+            document.getElementById('screen-menu')?.classList.add('hide-screen');
+            document.getElementById('screen-name-input')?.classList.remove('hide-screen');
+            document.getElementById('btn-back')?.classList.remove('hide-screen');
         }
 
         window.handleStartGame = function() {
@@ -1533,104 +1528,104 @@
             const displayEl = document.getElementById('display-player-name');
             if (displayEl) displayEl.innerText = activePlayerName;
 
-            document.getElementById('screen-name-input').classList.add('hide-screen');
-            document.getElementById('screen-mp-setup').classList.remove('hide-screen');
+            document.getElementById('screen-name-input')?.classList.add('hide-screen');
+            document.getElementById('screen-mp-setup')?.classList.remove('hide-screen');
         }
 
         window.handleBackToName = function() {
             AudioHelper.playSelect();
-            document.getElementById('screen-mp-setup').classList.add('hide-screen');
-            document.getElementById('screen-name-input').classList.remove('hide-screen');
+            document.getElementById('screen-mp-setup')?.classList.add('hide-screen');
+            document.getElementById('screen-name-input')?.classList.remove('hide-screen');
         }
 
         window.handleOpenLobby = async function() {
             AudioHelper.playSelect();
-            document.getElementById('screen-mp-setup').classList.add('hide-screen');
-            document.getElementById('screen-select-room').classList.remove('hide-screen');
-            await fetchAndRenderRooms();
+            document.getElementById('screen-mp-setup')?.classList.add('hide-screen');
+            document.getElementById('screen-select-room')?.classList.remove('hide-screen');
+            await fetchActiveRooms();
         }
 
         window.handleBackToSetup = function() {
             AudioHelper.playSelect();
             if (roomUnsubscribe) { roomUnsubscribe(); roomUnsubscribe = null; }
-            document.getElementById('screen-select-room').classList.add('hide-screen');
-            document.getElementById('screen-mp-setup').classList.remove('hide-screen');
+            document.getElementById('screen-select-room')?.classList.add('hide-screen');
+            document.getElementById('screen-mp-setup')?.classList.remove('hide-screen');
         }
 
-        async function fetchAndRenderRooms() {
-            const container = document.getElementById('rooms-grid-container');
-            if (!container) return;
-            container.innerHTML = '<div class="col-span-2 text-center py-4 text-xs font-bold text-slate-500">Memuat room dari server...</div>';
+        async function fetchActiveRooms() {
+            const gridContainer = document.getElementById('rooms-grid-container');
+            if (!gridContainer) return;
+            gridContainer.innerHTML = '<div class="col-span-2 text-center text-xs font-bold text-slate-500 py-4">Memuat daftar room dari cloud...</div>';
 
             try {
-                if (!db || !auth || !auth.currentUser) {
-                    container.innerHTML = '<div class="col-span-2 text-center py-4 text-xs font-bold text-rose-500">Cloud database tidak terhubung.</div>';
+                if (!db) {
+                    gridContainer.innerHTML = '<div class="col-span-2 text-center text-xs font-bold text-red-500 py-4">Database offline.</div>';
                     return;
                 }
                 const roomsCol = collection(db, 'artifacts', appId, 'public', 'data', 'rooms');
                 const snapshot = await getDocs(roomsCol);
                 
-                container.innerHTML = '';
-                let roomMap = {};
-                snapshot.forEach(docSnap => {
-                    roomMap[docSnap.id] = docSnap.data();
-                });
-
-                for (let i = 1; i <= 4; i++) {
-                    const rData = roomMap[`room_${i}`];
-                    const hasHost = rData && rData.hostName;
-                    
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = `room-col-btn p-3 border-2 rounded-xl font-bold text-left flex flex-col justify-between cursor-pointer transition-all ${hasHost ? 'border-green-600 bg-green-50 text-green-900 shadow-sm' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'}`;
-                    btn.onclick = () => promptJoinRoom(i, rData);
-                    
-                    btn.innerHTML = `
-                        <div class="flex justify-between items-center w-full">
-                            <span class="text-sm font-heading">Room ${i}</span>
-                            <span class="text-[10px] ${hasHost ? 'bg-green-600 text-white' : 'bg-slate-300 text-slate-700'} px-1.5 py-0.5 rounded font-bold">${hasHost ? `Aktif (${rData.players?.length || 1}/${rData.maxPlayers})` : 'Kosong'}</span>
-                        </div>
-                        <div class="mt-2 text-xs opacity-90 truncate">Host: <span class="italic font-bold">${hasHost ? rData.hostName : '-'}</span></div>
-                        <div class="mt-1 text-xs opacity-90 text-indigo-600">🔒 ${hasHost ? 'Ketuk untuk Masuk' : 'Belum Ada Room'}</div>
-                    `;
-                    container.appendChild(btn);
+                gridContainer.innerHTML = '';
+                if (snapshot.empty) {
+                    gridContainer.innerHTML = '<div class="col-span-2 text-center text-xs font-bold text-slate-500 py-4">Belum ada room aktif. Silakan buat room baru!</div>';
+                    return;
                 }
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const roomNum = data.roomNum || 1;
+                    const hostName = data.hostName || 'Host';
+                    const code = data.code || 'LAB123';
+                    const maxP = data.maxPlayers || 4;
+                    const currP = data.players ? data.players.length : 0;
+                    const status = data.status || 'waiting';
+
+                    const card = document.createElement('div');
+                    card.className = "p-3 border-2 border-indigo-200 rounded-xl bg-indigo-50/50 hover:bg-indigo-50 font-bold text-left flex flex-col justify-between cursor-pointer shadow-sm";
+                    card.onclick = () => promptJoinRoom(roomNum, code, data);
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center w-full">
+                            <span class="text-sm font-heading text-indigo-900">Room ${roomNum}</span>
+                            <span class="text-[10px] bg-indigo-600 text-white px-2 py-0.5 rounded-full font-bold">${currP}/${maxP} Pemain</span>
+                        </div>
+                        <div class="mt-2 text-xs text-slate-600 truncate">Host: <span class="italic text-indigo-700">${hostName}</span></div>
+                        <div class="mt-1 text-[10px] text-emerald-700 font-extrabold uppercase">Status: ${status === 'waiting' ? 'Menunggu' : 'Berlangsung'}</div>
+                    `;
+                    gridContainer.appendChild(card);
+                });
             } catch (e) {
                 console.error("Error fetching rooms:", e);
-                container.innerHTML = '<div class="col-span-2 text-center py-4 text-xs font-bold text-rose-500">Gagal memuat room online.</div>';
+                gridContainer.innerHTML = '<div class="col-span-2 text-center text-xs font-bold text-red-500 py-4">Gagal memuat room.</div>';
             }
         }
 
-        window.promptJoinRoom = function(roomNum, roomDataObj) {
+        function promptJoinRoom(roomNum, roomCode, roomDataObj) {
             AudioHelper.playSelect();
-            if (!roomDataObj || !roomDataObj.hostName) {
-                showInfoModal("Room Kosong", `Room ${roomNum} belum dibuat oleh pemain manapun. Silakan buat room terlebih dahulu!`);
-                return;
-            }
-            tempSelectedRoomForJoin = { roomNum, roomDataObj };
-            document.getElementById('modal-join-room-title').innerText = `Room ${roomNum} (Host: ${roomDataObj.hostName})`;
+            tempSelectedRoomForJoin = { roomNum, roomCode, roomDataObj };
+            document.getElementById('modal-join-room-title').innerText = `Room ${roomNum}`;
             document.getElementById('join-room-code-input').value = '';
             document.getElementById('room-code-join-modal').classList.add('show');
         }
 
         window.closeJoinCodeModal = function() {
+            AudioHelper.playSelect();
             document.getElementById('room-code-join-modal').classList.remove('show');
             tempSelectedRoomForJoin = null;
         }
 
-        window.verifyAndJoinRoom = async function() {
+        window.verifyAndJoinRoom = function() {
             AudioHelper.playSelect();
-            const enteredCode = document.getElementById('join-room-code-input').value.trim().toUpperCase();
+            const inputCode = document.getElementById('join-room-code-input').value.trim().toUpperCase();
             if (!tempSelectedRoomForJoin) return;
-            
-            const { roomNum, roomDataObj } = tempSelectedRoomForJoin;
-            if (enteredCode !== roomDataObj.code) {
-                showInfoModal("Kode Salah", "Kode ruang yang kamu masukkan salah! Mohon tanyakan kode rahasia kepada host.");
+
+            if (inputCode !== tempSelectedRoomForJoin.roomCode) {
+                showInfoModal("Kode Salah", "Kode ruang rahasia yang kamu masukkan salah!");
                 return;
             }
 
-            closeJoinCodeModal();
-            await joinOnlineRoom(roomNum, roomDataObj);
+            document.getElementById('room-code-join-modal').classList.remove('show');
+            joinOnlineRoom(tempSelectedRoomForJoin.roomNum, tempSelectedRoomForJoin.roomDataObj);
+            tempSelectedRoomForJoin = null;
         }
 
         window.handleCreateLobby = async function() {
@@ -1647,6 +1642,7 @@
             activeRoomCode = roomCode;
             selectedMode = count;
             isOnlineMode = true;
+            isHostUser = true;
 
             const newPlayer = {
                 userId: userId,
@@ -1678,7 +1674,7 @@
                 console.error("Error creating room on Firestore:", e);
             }
 
-            startOnlineGameSession(roomNum, roomCode);
+            startWaitingRoomSession(roomNum, roomCode, true);
         }
 
         async function joinOnlineRoom(roomNum, roomDataObj) {
@@ -1686,6 +1682,7 @@
             activeRoomCode = roomDataObj.code;
             selectedMode = roomDataObj.maxPlayers;
             isOnlineMode = true;
+            isHostUser = false;
 
             let existingPlayers = roomDataObj.players || [];
             let existingIdx = existingPlayers.findIndex(p => p.userId === userId);
@@ -1718,34 +1715,114 @@
                 console.error("Error joining room on Firestore:", e);
             }
 
-            startOnlineGameSession(roomNum, roomDataObj.code);
+            startWaitingRoomSession(roomNum, roomDataObj.code, false);
         }
 
-        function startOnlineGameSession(roomNum, roomCode) {
-            currentLevel = 1;
-            const badge = document.getElementById('level-display-badge');
-            if(badge) badge.innerText = `Level ${currentLevel}`;
-            
-            const badgeCode = document.getElementById('room-code-badge');
-            if(badgeCode) badgeCode.innerText = `Room ${roomNum} [${roomCode}]`;
-
+        function startWaitingRoomSession(roomNum, roomCode, isHost) {
+            isHostUser = isHost;
             document.getElementById('screen-mp-setup')?.classList.add('hide-screen');
             document.getElementById('screen-select-room')?.classList.add('hide-screen');
-            document.getElementById('screen-game').classList.remove('hide-screen');
-            document.getElementById('hud-lives').classList.remove('hide-screen');
-            document.getElementById('online-status-badge').classList.remove('hidden');
+            document.getElementById('screen-waiting-room')?.classList.remove('hide-screen');
+            
+            document.getElementById('waiting-room-number-badge').innerText = `Room ${roomNum}`;
+            document.getElementById('waiting-room-code-display').innerText = roomCode;
+            document.getElementById('waiting-max-players').innerText = selectedMode;
+
+            const startBtn = document.getElementById('btn-host-start-game');
+            const guestMsg = document.getElementById('guest-waiting-msg');
+            
+            if (isHost) {
+                startBtn.classList.remove('hidden');
+                guestMsg.classList.add('hidden');
+            } else {
+                startBtn.classList.add('hidden');
+                guestMsg.classList.remove('hidden');
+            }
+
+            updateWaitingRoomUI();
+            setupRoomRealtimeListener(roomNum);
+        }
+
+        function updateWaitingRoomUI() {
+            const listContainer = document.getElementById('waiting-players-list');
+            const countEl = document.getElementById('waiting-player-count');
+            const hostDisplay = document.getElementById('host-name-display');
+            if (!listContainer) return;
+
+            if (countEl) countEl.innerText = players.length;
+            const hostObj = players.find(p => p.isHost) || players[0];
+            if (hostDisplay && hostObj) hostDisplay.innerText = hostObj.name;
+
+            listContainer.innerHTML = '';
+            players.forEach((p, idx) => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between bg-white p-2.5 rounded-xl border border-indigo-200 shadow-sm";
+                item.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">${p.emoji || '🧑'}</span>
+                        <span class="font-bold text-slate-700 text-sm">${p.name} ${p.userId === userId ? '(Kamu)' : ''}</span>
+                    </div>
+                    <span class="text-[10px] font-bold ${p.isHost ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-slate-100 text-slate-600 border-slate-300'} px-2 py-0.5 rounded-full border">
+                        ${p.isHost ? '👑 Host' : `Pemain ${idx + 1}`}
+                    </span>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        window.leaveWaitingRoom = async function() {
+            AudioHelper.playSelect();
+            if (isOnlineMode && db && activeRoomNum) {
+                try {
+                    players = players.filter(p => p.userId !== userId);
+                    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', `room_${activeRoomNum}`);
+                    if (players.length === 0) {
+                        await setDoc(roomRef, { hostName: null, code: null, players: [] });
+                    } else {
+                        if (isHostUser && players.length > 0) {
+                            players[0].isHost = true;
+                        }
+                        await updateDoc(roomRef, { players: players });
+                    }
+                } catch(e) {}
+            }
+            showMenu();
+        }
+
+        window.hostStartGameSession = async function() {
+            AudioHelper.playSelect();
+            if (!isHostUser) return;
+            
+            try {
+                if (db && activeRoomNum) {
+                    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', `room_${activeRoomNum}`);
+                    await updateDoc(roomRef, { status: 'playing' });
+                }
+            } catch(e) {}
+
+            launchGameScreen(activeRoomNum, activeRoomCode);
+        }
+
+        function launchGameScreen(roomNum, roomCode) {
+            document.getElementById('screen-waiting-room')?.classList.add('hide-screen');
+            document.getElementById('screen-game')?.classList.remove('hide-screen');
+            document.getElementById('hud-lives')?.classList.remove('hide-screen');
+            document.getElementById('online-status-badge')?.classList.remove('hidden');
+
+            if (roomNum) {
+                const badgeCode = document.getElementById('room-code-badge');
+                if(badgeCode) badgeCode.innerText = `Room ${roomNum} [${roomCode}]`;
+            }
 
             randomizePath();
 
-            document.getElementById('board-2d-wrapper').classList.add('hidden');
-            document.getElementById('board-3d-wrapper').classList.remove('hidden');
+            document.getElementById('board-2d-wrapper')?.classList.add('hidden');
+            document.getElementById('board-3d-wrapper')?.classList.remove('hidden');
 
             setTimeout(() => {
                 init3D();
                 updateLeaderboard();
             }, 100);
-
-            setupRoomRealtimeListener(roomNum);
         }
 
         function setupRoomRealtimeListener(roomNum) {
@@ -1756,8 +1833,18 @@
             roomUnsubscribe = onSnapshot(roomRef, (docSnap) => {
                 if (!docSnap.exists()) return;
                 const data = docSnap.data();
-                if (data && data.players) {
-                    players = data.players;
+                if (data) {
+                    if (data.players) {
+                        players = data.players;
+                        updateWaitingRoomUI();
+                        updateLeaderboard();
+                    }
+                    if (data.status === 'playing') {
+                        const waitingScreen = document.getElementById('screen-waiting-room');
+                        if (waitingScreen && !waitingScreen.classList.contains('hide-screen')) {
+                            launchGameScreen(roomNum, data.code);
+                        }
+                    }
                     if (data.currentLevel && data.currentLevel !== currentLevel) {
                         currentLevel = data.currentLevel;
                         const badge = document.getElementById('level-display-badge');
@@ -1765,7 +1852,6 @@
                         randomizePath();
                         init3D();
                     }
-                    updateLeaderboard();
                 }
             }, (error) => {
                 console.debug("Firestore snapshot error:", error);
@@ -1802,14 +1888,14 @@
                 isLocal: true
             });
 
-            document.getElementById('screen-setup').classList.add('hide-screen');
-            document.getElementById('screen-game').classList.remove('hide-screen');
-            document.getElementById('hud-lives').classList.remove('hide-screen');
+            document.getElementById('screen-setup')?.classList.add('hide-screen');
+            document.getElementById('screen-game')?.classList.remove('hide-screen');
+            document.getElementById('hud-lives')?.classList.remove('hide-screen');
 
             randomizePath();
 
-            document.getElementById('board-2d-wrapper').classList.add('hidden');
-            document.getElementById('board-3d-wrapper').classList.remove('hidden');
+            document.getElementById('board-2d-wrapper')?.classList.add('hidden');
+            document.getElementById('board-3d-wrapper')?.classList.remove('hidden');
 
             setTimeout(() => {
                 init3D();
@@ -1823,23 +1909,25 @@
             const mpSetup = document.getElementById('screen-mp-setup');
             const nameInput = document.getElementById('screen-name-input');
             const selectRoom = document.getElementById('screen-select-room');
+            const waitingRoom = document.getElementById('screen-waiting-room');
 
             if ((setupScreen && !setupScreen.classList.contains('hide-screen')) || 
                 (mpSetup && !mpSetup.classList.contains('hide-screen')) || 
                 (nameInput && !nameInput.classList.contains('hide-screen')) || 
-                (selectRoom && !selectRoom.classList.contains('hide-screen'))) {
+                (selectRoom && !selectRoom.classList.contains('hide-screen')) ||
+                (waitingRoom && !waitingRoom.classList.contains('hide-screen'))) {
                 showMenu();
             } else {
-                document.getElementById('confirm-exit-modal').classList.add('show');
+                document.getElementById('confirm-exit-modal')?.classList.add('show');
             }
         }
 
         window.closeExitModal = function() {
-            document.getElementById('confirm-exit-modal').classList.remove('show');
+            document.getElementById('confirm-exit-modal')?.classList.remove('show');
         }
 
         window.confirmExit = function() {
-            document.getElementById('confirm-exit-modal').classList.remove('show');
+            document.getElementById('confirm-exit-modal')?.classList.remove('show');
             showMenu();
         }
 
@@ -1864,7 +1952,8 @@
 
         window.toggleSound = function() {
             const isMuted = AudioHelper.toggleMute();
-            document.getElementById('sound-icon').innerText = isMuted ? "🔇" : "🔊";
+            const icon = document.getElementById('sound-icon');
+            if(icon) icon.innerText = isMuted ? "🔇" : "🔊";
         }
 
         window.toggleRules = function() {
@@ -1874,14 +1963,16 @@
             const btnText = document.getElementById('rules-toggle-text');
             const btnIcon = document.getElementById('rules-toggle-icon');
             
-            if (container.classList.contains('max-h-36')) {
+            if (container && container.classList.contains('max-h-36')) {
                 container.classList.remove('max-h-36'); container.classList.add('max-h-[1000px]');
-                fade.classList.add('hidden');
-                btnText.innerText = 'Lihat Lebih Sedikit'; btnIcon.innerText = '🔼';
-            } else {
+                fade?.classList.add('hidden');
+                if(btnText) btnText.innerText = 'Lihat Lebih Sedikit'; 
+                if(btnIcon) btnIcon.innerText = '🔼';
+            } else if(container) {
                 container.classList.remove('max-h-[1000px]'); container.classList.add('max-h-36');
-                fade.classList.add('hidden');
-                btnText.innerText = 'Lihat Semua'; btnIcon.innerText = '🔽';
+                fade?.classList.remove('hidden');
+                if(btnText) btnText.innerText = 'Lihat Semua'; 
+                if(btnIcon) btnIcon.innerText = '🔽';
             }
         }
 
