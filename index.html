@@ -261,22 +261,30 @@
 
         <div class="flex justify-center gap-4 flex-wrap">
             <button onclick="showMenu()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#64748b] !bg-slate-300 !border-slate-500 !text-slate-700 w-auto max-w-xs transition-all">Kembali</button>
-            <button onclick="handleStartGame()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#15803d] !bg-green-400 !border-green-700 !text-green-900 w-auto max-w-xs transition-all">Lanjut</button>
+            <button onclick="handleStartGameToLobby()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#15803d] !bg-green-400 !border-green-700 !text-green-900 w-auto max-w-xs transition-all">Masuk ke Lobby</button>
         </div>
     </div>
 
-    <div id="screen-mp-setup" class="hide-screen w-full max-w-lg bg-white border-8 border-slate-800 rounded-[30px] shadow-[10px_10px_0_#0f172a] p-8 text-center mx-4 z-50 max-h-[95vh] overflow-y-auto">
-        <h2 class="font-heading text-3xl text-slate-700 mb-2">Buat Ruangan Online</h2>
-        <p class="font-bold text-slate-500 mb-6">Atur Ruangan Kamu</p>
+    <div id="screen-select-room" class="hide-screen w-full max-w-lg bg-white border-8 border-slate-800 rounded-[30px] shadow-[10px_10px_0_#0f172a] p-8 text-center mx-4 z-50 max-h-[95vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="font-heading text-2xl md:text-3xl text-slate-700">🌐 Lobby Room Online</h2>
+            <button onclick="refreshActiveRooms()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold text-xs px-3 py-1.5 rounded-xl border border-indigo-300 transition-all active:translate-y-0.5" title="Refresh Daftar Room">🔄 Refresh</button>
+        </div>
+        <p class="font-bold text-slate-500 mb-4 text-xs md:text-sm">Pilih Room aktif di bawah atau buat Room baru untuk bermain bersama!</p>
         
         <div class="mb-6 bg-slate-50 p-4 rounded-2xl border-2 border-slate-200 text-left">
-            <h4 class="font-heading text-slate-700 text-sm mb-2">⚙️ Konfigurasi Room</h4>
-            <div class="text-xs font-bold text-slate-600 mb-3">
-                <p>Pemain: <span id="display-player-name" class="text-indigo-600 font-extrabold text-sm"></span></p>
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-bold text-slate-600">Daftar Room (Room 1 - 4):</span>
+                <span class="text-[10px] text-indigo-600 font-extrabold" id="lobby-player-greeting">Pemain: -</span>
             </div>
-            <div class="grid grid-cols-2 gap-3 text-xs font-bold text-slate-600 mb-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="rooms-grid-container"></div>
+        </div>
+
+        <div class="bg-indigo-50 p-4 rounded-2xl border-2 border-indigo-200 mb-6 text-left">
+            <h4 class="font-heading text-indigo-900 text-sm mb-2">⚡ Buat Room Baru Cepat</h4>
+            <div class="grid grid-cols-2 gap-2 mb-3 text-xs font-bold text-slate-600">
                 <div>
-                    <label class="block mb-1">Pilih Nomor Room:</label>
+                    <label class="block mb-1">Nomor Room:</label>
                     <select id="room-number-select" class="w-full p-2 border-2 border-slate-300 rounded-xl bg-white text-slate-700 outline-none font-bold">
                         <option value="1">Room 1</option>
                         <option value="2">Room 2</option>
@@ -285,7 +293,7 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block mb-1">Jumlah Maksimal:</label>
+                    <label class="block mb-1">Maks Pemain:</label>
                     <select id="room-player-count" class="w-full p-2 border-2 border-slate-300 rounded-xl bg-white text-slate-700 outline-none font-bold">
                         <option value="2">2 Pemain</option>
                         <option value="3">3 Pemain</option>
@@ -293,30 +301,15 @@
                     </select>
                 </div>
             </div>
-            <div class="text-xs font-bold text-slate-600">
-                <label class="block mb-1">Kode Ruang Rahasia:</label>
-                <input type="text" id="room-code-input" class="w-full p-2 border-2 border-slate-300 rounded-xl bg-white text-slate-700 outline-none uppercase font-bold text-center tracking-widest" value="LAB123" maxlength="6">
+            <div class="text-xs font-bold text-slate-600 mb-3">
+                <label class="block mb-1">Kode Rahasia:</label>
+                <input type="text" id="room-code-input" class="w-full p-2 border-2 border-slate-300 rounded-xl bg-white text-slate-700 uppercase font-bold text-center tracking-widest outline-none" value="LAB123" maxlength="6">
             </div>
+            <button onclick="handleCreateLobbyDirect()" class="btn-action w-full !py-2.5 !text-sm !border-2 !shadow-[0_4px_0_#15803d] !bg-green-400 !border-green-700 !text-green-900">Buat & Masuk Room 🚀</button>
         </div>
 
-        <div class="flex justify-center gap-4 flex-wrap">
-            <button onclick="handleBackToName()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#64748b] !bg-slate-300 !border-slate-500 !text-slate-700 w-auto max-w-xs transition-all">Kembali</button>
-            <button onclick="handleOpenLobby()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#2563eb] !bg-blue-400 !border-blue-700 !text-blue-900 w-auto max-w-xs transition-all">Cari Ruang</button>
-            <button onclick="handleCreateLobby()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#15803d] !bg-green-400 !border-green-700 !text-green-900 w-auto max-w-xs transition-all">Buat Room</button>
-        </div>
-    </div>
-
-    <div id="screen-select-room" class="hide-screen w-full max-w-lg bg-white border-8 border-slate-800 rounded-[30px] shadow-[10px_10px_0_#0f172a] p-8 text-center mx-4 z-50 max-h-[95vh] overflow-y-auto">
-        <h2 class="font-heading text-3xl text-slate-700 mb-2">Daftar Room Online</h2>
-        <p class="font-bold text-slate-500 mb-6">Pilih Room untuk Bergabung (Masukkan Kode)</p>
-        
-        <div class="mb-6 bg-slate-50 p-4 rounded-2xl border-2 border-slate-200 text-left">
-            <label class="block mb-2 text-xs font-bold text-slate-600">Room Aktif di Cloud:</label>
-            <div class="grid grid-cols-2 gap-3" id="rooms-grid-container"></div>
-        </div>
-
-        <div class="flex justify-center gap-4 flex-wrap">
-            <button onclick="handleBackToSetup()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#64748b] !bg-slate-300 !border-slate-500 !text-slate-700 w-auto max-w-xs transition-all">Kembali</button>
+        <div class="flex justify-center">
+            <button onclick="showMenu()" class="btn-action !py-2 !px-6 !text-base !border-2 !shadow-[0_4px_0_#64748b] !bg-slate-300 !border-slate-500 !text-slate-700 w-auto max-w-xs transition-all">Kembali ke Menu</button>
         </div>
     </div>
 
@@ -1488,7 +1481,6 @@
             document.getElementById('screen-menu')?.classList.remove('hide-screen');
             document.getElementById('screen-setup')?.classList.add('hide-screen');
             document.getElementById('screen-name-input')?.classList.add('hide-screen');
-            document.getElementById('screen-mp-setup')?.classList.add('hide-screen');
             document.getElementById('screen-select-room')?.classList.add('hide-screen');
             document.getElementById('screen-waiting-room')?.classList.add('hide-screen');
             document.getElementById('screen-game')?.classList.add('hide-screen');
@@ -1524,41 +1516,27 @@
             document.getElementById('btn-back')?.classList.remove('hide-screen');
         }
 
-        window.handleStartGame = function() {
+        window.handleStartGameToLobby = async function() {
             AudioHelper.playSelect();
             const inputEl = document.getElementById('player-name-input');
             activePlayerName = inputEl ? inputEl.value.trim() || 'Alfan' : 'Alfan';
-            const displayEl = document.getElementById('display-player-name');
-            if (displayEl) displayEl.innerText = activePlayerName;
+            const greetingEl = document.getElementById('lobby-player-greeting');
+            if (greetingEl) greetingEl.innerText = `Pemain: ${activePlayerName}`;
 
             document.getElementById('screen-name-input')?.classList.add('hide-screen');
-            document.getElementById('screen-mp-setup')?.classList.remove('hide-screen');
-        }
-
-        window.handleBackToName = function() {
-            AudioHelper.playSelect();
-            document.getElementById('screen-mp-setup')?.classList.add('hide-screen');
-            document.getElementById('screen-name-input')?.classList.remove('hide-screen');
-        }
-
-        window.handleOpenLobby = async function() {
-            AudioHelper.playSelect();
-            document.getElementById('screen-mp-setup')?.classList.add('hide-screen');
             document.getElementById('screen-select-room')?.classList.remove('hide-screen');
             await fetchActiveRooms();
         }
 
-        window.handleBackToSetup = function() {
+        window.refreshActiveRooms = async function() {
             AudioHelper.playSelect();
-            if (roomUnsubscribe) { roomUnsubscribe(); roomUnsubscribe = null; }
-            document.getElementById('screen-select-room')?.classList.add('hide-screen');
-            document.getElementById('screen-mp-setup')?.classList.remove('hide-screen');
+            await fetchActiveRooms();
         }
 
         async function fetchActiveRooms() {
             const gridContainer = document.getElementById('rooms-grid-container');
             if (!gridContainer) return;
-            gridContainer.innerHTML = '<div class="col-span-2 text-center text-xs font-bold text-slate-500 py-4">Memuat daftar room dari cloud...</div>';
+            gridContainer.innerHTML = '<div class="col-span-2 text-center text-xs font-bold text-slate-500 py-4">Memuat daftar room aktif...</div>';
 
             try {
                 if (!db) {
@@ -1568,38 +1546,101 @@
                 const roomsCol = collection(db, 'artifacts', appId, 'public', 'data', 'rooms');
                 const snapshot = await getDocs(roomsCol);
                 
-                gridContainer.innerHTML = '';
-                if (snapshot.empty) {
-                    gridContainer.innerHTML = '<div class="col-span-2 text-center text-xs font-bold text-slate-500 py-4">Belum ada room aktif. Silakan buat room baru!</div>';
-                    return;
-                }
-
+                // Map existing rooms or ensure rooms 1 to 4 display
+                let roomsMap = {};
                 snapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    const roomNum = data.roomNum || 1;
-                    const hostName = data.hostName || 'Host';
-                    const code = data.code || 'LAB123';
-                    const maxP = data.maxPlayers || 4;
-                    const currP = data.players ? data.players.length : 0;
-                    const status = data.status || 'waiting';
+                    if (data && data.roomNum) {
+                        roomsMap[data.roomNum] = data;
+                    }
+                });
+
+                gridContainer.innerHTML = '';
+                for (let rNum = 1; rNum <= 4; rNum++) {
+                    const roomData = roomsMap[rNum];
+                    const hasActive = roomData && roomData.players && roomData.players.length > 0;
+                    const currP = hasActive ? roomData.players.length : 0;
+                    const maxP = hasActive ? (roomData.maxPlayers || 4) : 4;
+                    const hostName = hasActive ? (roomData.hostName || 'Host') : '-';
+                    const code = hasActive ? (roomData.code || 'LAB123') : 'LAB123';
+                    const status = hasActive ? (roomData.status || 'waiting') : 'kosong';
 
                     const card = document.createElement('div');
-                    card.className = "p-3 border-2 border-indigo-200 rounded-xl bg-indigo-50/50 hover:bg-indigo-50 font-bold text-left flex flex-col justify-between cursor-pointer shadow-sm";
-                    card.onclick = () => promptJoinRoom(roomNum, code, data);
-                    card.innerHTML = `
-                        <div class="flex justify-between items-center w-full">
-                            <span class="text-sm font-heading text-indigo-900">Room ${roomNum}</span>
-                            <span class="text-[10px] bg-indigo-600 text-white px-2 py-0.5 rounded-full font-bold">${currP}/${maxP} Pemain</span>
-                        </div>
-                        <div class="mt-2 text-xs text-slate-600 truncate">Host: <span class="italic text-indigo-700">${hostName}</span></div>
-                        <div class="mt-1 text-[10px] text-emerald-700 font-extrabold uppercase">Status: ${status === 'waiting' ? 'Menunggu' : 'Berlangsung'}</div>
-                    `;
+                    card.className = `p-3 border-2 ${hasActive ? 'border-indigo-200 bg-indigo-50/60 hover:bg-indigo-50' : 'border-slate-200 bg-slate-50'} rounded-xl font-bold text-left flex flex-col justify-between shadow-sm transition-all`;
+                    
+                    if (hasActive) {
+                        card.onclick = () => promptJoinRoom(rNum, code, roomData);
+                        card.innerHTML = `
+                            <div class="flex justify-between items-center w-full">
+                                <span class="text-sm font-heading text-indigo-900">Room ${rNum}</span>
+                                <span class="text-[10px] bg-indigo-600 text-white px-2 py-0.5 rounded-full font-bold">${currP}/${maxP} Pemain</span>
+                            </div>
+                            <div class="mt-2 text-xs text-slate-600 truncate">Host: <span class="italic text-indigo-700">${hostName}</span></div>
+                            <div class="mt-1 flex justify-between items-center">
+                                <span class="text-[10px] text-emerald-700 font-extrabold uppercase">Status: ${status === 'waiting' ? 'Menunggu' : 'Bermain'}</span>
+                                <span class="text-[10px] bg-green-500 text-white px-2 py-0.5 rounded-md">Gabung ➡️</span>
+                            </div>
+                        `;
+                    } else {
+                        card.onclick = () => quickCreateAndJoinRoom(rNum);
+                        card.innerHTML = `
+                            <div class="flex justify-between items-center w-full">
+                                <span class="text-sm font-heading text-slate-500">Room ${rNum}</span>
+                                <span class="text-[10px] bg-slate-300 text-slate-700 px-2 py-0.5 rounded-full font-bold">Kosong</span>
+                            </div>
+                            <div class="mt-2 text-xs text-slate-400">Belum ada room aktif</div>
+                            <div class="mt-1 text-right">
+                                <span class="text-[10px] text-indigo-600 font-extrabold underline">Buat Room Ini +</span>
+                            </div>
+                        `;
+                    }
                     gridContainer.appendChild(card);
-                });
+                }
             } catch (e) {
                 console.error("Error fetching rooms:", e);
                 gridContainer.innerHTML = '<div class="col-span-2 text-center text-xs font-bold text-red-500 py-4">Gagal memuat room.</div>';
             }
+        }
+
+        async function quickCreateAndJoinRoom(roomNum) {
+            AudioHelper.playSelect();
+            activeRoomNum = roomNum;
+            activeRoomCode = "LAB123";
+            selectedMode = 4;
+            isOnlineMode = true;
+            isHostUser = true;
+
+            const newPlayer = {
+                userId: userId,
+                name: activePlayerName,
+                color: playerConfigs[0].color,
+                emoji: playerConfigs[0].emoji,
+                position: 0,
+                score: 0,
+                snippetsCollected: 0,
+                isHost: true
+            };
+
+            players = [newPlayer];
+
+            try {
+                if (db && auth && auth.currentUser) {
+                    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', `room_${roomNum}`);
+                    await setDoc(roomRef, {
+                        roomNum: roomNum,
+                        hostName: activePlayerName,
+                        code: activeRoomCode,
+                        maxPlayers: 4,
+                        status: 'waiting',
+                        currentLevel: 1,
+                        players: players
+                    });
+                }
+            } catch (e) {
+                console.error("Error creating quick room:", e);
+            }
+
+            startWaitingRoomSession(roomNum, activeRoomCode, true);
         }
 
         function promptJoinRoom(roomNum, roomCode, roomDataObj) {
@@ -1631,7 +1672,7 @@
             tempSelectedRoomForJoin = null;
         }
 
-        window.handleCreateLobby = async function() {
+        window.handleCreateLobbyDirect = async function() {
             AudioHelper.playSelect();
             const roomNumSelect = document.getElementById('room-number-select');
             const countEl = document.getElementById('room-player-count');
@@ -1723,7 +1764,6 @@
 
         function startWaitingRoomSession(roomNum, roomCode, isHost) {
             isHostUser = isHost;
-            document.getElementById('screen-mp-setup')?.classList.add('hide-screen');
             document.getElementById('screen-select-room')?.classList.add('hide-screen');
             document.getElementById('screen-waiting-room')?.classList.remove('hide-screen');
             
