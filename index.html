@@ -919,7 +919,6 @@
             const duration = performance.now() - pointerStartTime;
 
             if (distance < 15 && duration < 300) {
-                // Find current user's player index
                 const myPlayerIdx = players.findIndex(p => p.isLocal || p.userId === userId || p.name === activePlayerName);
                 handlePlayerStep(myPlayerIdx !== -1 ? myPlayerIdx : 0);
             }
@@ -1689,7 +1688,6 @@
             isOnlineMode = true;
 
             let existingPlayers = roomDataObj.players || [];
-            // Check if user already joined
             let existingIdx = existingPlayers.findIndex(p => p.userId === userId);
             if (existingIdx === -1) {
                 if (existingPlayers.length >= roomDataObj.maxPlayers) {
@@ -1759,7 +1757,6 @@
                 if (!docSnap.exists()) return;
                 const data = docSnap.data();
                 if (data && data.players) {
-                    // Update players state while preserving local animation states
                     players = data.players;
                     if (data.currentLevel && data.currentLevel !== currentLevel) {
                         currentLevel = data.currentLevel;
